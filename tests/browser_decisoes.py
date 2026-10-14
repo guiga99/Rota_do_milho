@@ -28,7 +28,7 @@ try:
   context.route('https://github.com/**',lambda r:r.fulfill(body='<p>Formulário externo interceptado no teste</p>',content_type='text/html'))
   page=context.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
   page.goto(url);page.get_by_text('Nenhum registro confirmado ainda.',exact=False).wait_for()
-  assert page.locator('.card').count()==8
+  assert page.locator('.card').count()==11
   assert page.locator('.option[aria-pressed="true"]').count()==0
   assert page.locator('#save').is_disabled()
   page.get_by_role('button',name=re.compile('Refinar seleção jurídica')).click()
@@ -62,6 +62,14 @@ try:
   page.locator('#refresh').click();page.get_by_text('1 registro(s) confirmado(s)',exact=False).wait_for()
   assert page.locator('article.card img').count()==0
   results.append('Conteúdo externo é apresentado como texto, sem HTML executável')
+  cloud_payload={'schema':'rota-decisions/v1','project':'guiga99/Rota_do_milho','decisions':[
+      {'id':'hospedagem','option':'streamlit_cloud','note':'Piloto gerenciado sintético'}],'guidance':''}
+  remote.append({**issue,'number':12,'body':'<!-- rota-decisions:v1 -->\n```json\n'+json.dumps(cloud_payload)+'\n```'})
+  page.locator('#refresh').click();page.get_by_text('2 registro(s) confirmado(s)',exact=False).wait_for()
+  assert page.locator('#q-hospedagem .status').inner_text()=='Registrada no GitHub'
+  for q in ['fornecedor_piloto','persistencia_cloud','orcamento_piloto']:
+   assert page.locator('#q-'+q+' .option[aria-pressed="true"]').count()==0
+  results.append('Hospedagem registrada é preservada; fornecedor, banco e teto continuam sem decisão automática')
   page.get_by_text('Selecionar campos prioritários no inventário',exact=True).click()
   page.locator('#field-list input').first.wait_for()
   assert page.locator('#field-list input').count()==39

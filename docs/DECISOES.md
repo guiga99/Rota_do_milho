@@ -51,3 +51,7 @@ A seção Amostra oferece o Excel de 20 processos e ZIP com evidências. O inven
 ## Registro da issue #3
 
 A escolha Google e a preferência por tabela enxuta foram implementadas no código. A orientação geral sobre TJSC/eproc foi avaliada e está em TJSC_EPROC.md. A nova pergunta `hospedagem` documenta o próximo requisito para o callback OAuth e a persistência; não enviar segredos ou lista de e-mails no registro público.
+
+## Registro da issue #4
+
+Streamlit Community Cloud escolhido, com persistência antes de uso operacional. Sete campos complementares e cinco fornecedores estudados: FONTES_COMPLEMENTARES.md. Entrada Cloud protegida, PostgreSQL e importação offline preparados; implantação e consulta comercial real permanecem pendentes. As novas perguntas `fornecedor_piloto`, `persistencia_cloud` e `orcamento_piloto` registram escolhas explícitas, sem contratação automática. Não inferir autorização de custo a partir de uma sugestão de fornecedor.

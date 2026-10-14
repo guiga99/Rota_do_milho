@@ -26,6 +26,15 @@ class AccessTests(unittest.TestCase):
             self.assertEqual(len(app.text_input),0)
             self.assertEqual(len(app.tabs),4)
             self.assertNotIn('secret-value',' '.join(x.value for x in app.markdown))
+            from test_mvp import source
+            from rota.core import normalizar
+            record=normalizar(source(),[])
+            app.session_state['result']={'id':'fixture-role','status':'Concluída','cnjs_unicos':1,'recebidos':1,
+                'registros':[record],'paginas':[],'query':{},'duplicados':0,'criada':'2026-01-01'}
+            app.run()
+            self.assertEqual(len(app.exception),0)
+            self.assertEqual(len(app.get('file_uploader')),0)
+            self.assertNotIn('Importar JSON e registrar fonte',[b.label for b in app.button])
 
     def test_local_mode_cannot_bind_public_interface(self):
         from rota.access import proteger

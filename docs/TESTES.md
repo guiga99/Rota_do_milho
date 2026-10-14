@@ -40,6 +40,27 @@ Para cada execução registrar versão do código, ambiente, data, alvo, quantid
 
 ## Situação atual
 
-A suíte atual contém 13 testes automatizados aprovados (ver `tests/`), incluindo interface pelo AppTest, exportação, persistência, paginação parcial, autenticação, timeout e retry.
+A suíte atual contém **32 testes automatizados aprovados**, em 14/10/2026 UTC, Python 3.12/Linux. Inclui AppTest, exportação, persistência, paginação, autenticação, timeout/retry, regras Google, bloqueio Cloud sem OAuth/banco e enriquecimento sintético. Este é o resultado atual; o primeiro incremento tinha 13 testes.
 
 O primeiro incremento executou consulta real com HTTP 200 e 10 CNJs, gerando XLSX reaberto por OpenPyXL. O download pelo Chromium também foi realizado, com 10 registros conferidos. A confirmação no Excel do Windows permanece pendente. Consulte [Relatório do incremento](VALIDACAO_INCREMENTO_1.md) para limites e evidências.
+
+## Incremento da issue #4
+
+Além da suite, passaram:
+
+- **PostgreSQL 17 / TLS real em Docker**: CA/hostname corretos; CA incorreta rejeitada por verificação de certificado; JSON/Unicode intactos; upsert, append concorrente e deduplicação; dados conservados após reinício. Fixtures sintéticas e container/volume descartáveis. Não comprova backup/restauração nem conectividade do futuro banco Cloud.
+- **Painel / Chromium**: 11 perguntas sem pré-aprovação, rascunhos, issue sem rótulo reconhecida após retorno, autor/schema, texto externo seguro, inventário, download, resposta extensa e layout mobile. Mock local de issues, sem publicar decisões fictícias.
+- **Aplicação / Chromium**: upload JUDIT sintético, CNJ diferente rejeitado sem gravação, importação preservada no SQLite, original DataJud intacto, candidatos inferidos sinalizados, downloads XLSX/JSON reabertos com arquivo/hash conferidos. Não é consulta comercial real.
+
+Reproduzir (Linux, Python 3.12):
+
+```bash
+.venv/bin/python -m unittest discover -s tests -v
+.venv/bin/python scripts/testar_postgres.py
+.venv/bin/python -m pip install -r requirements-dev.txt
+.venv/bin/python -m playwright install chromium
+.venv/bin/python tests/browser_decisoes.py
+.venv/bin/python tests/browser_enrichment.py
+```
+
+PostgreSQL exige Docker/OpenSSL; Chromium exige dependências do sistema. Scripts usam `/usr/bin/chromium` se disponível ou o browser instalado pelo Playwright. Dependências de navegador são de desenvolvimento; não entram no runtime Streamlit. CI executa a suite e integração PostgreSQL. Google OAuth real, consulta comercial e homologação na hospedagem continuam pendentes: STREAMLIT_CLOUD.md.

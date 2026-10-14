@@ -6,7 +6,9 @@ Navegador → Streamlit → serviço de consulta → cliente DataJud/CNJ.
 
 O serviço de consulta também aciona normalização, validação, regras de movimentos, SQLite, armazenamento de respostas e exportador OpenPyXL. O navegador nunca chama o CNJ com a chave da integração.
 
-A primeira versão atende um operador, com área de configuração restrita. SQLite exige disco persistente; uma hospedagem com disco efêmero não atende o histórico. Avaliar PostgreSQL ao introduzir múltiplas réplicas ou maior concorrência.
+O modo local usa SQLite em loopback. O piloto da equipe no Streamlit Community Cloud usa `cloud_app.py`, Google/allowlist e PostgreSQL externo obrigatório com TLS/CA/hostname verificados. Sem configuração, bloqueia acesso; sem banco externo, não recorre a SQLite. Histórico compartilhado, configurações/importação restritas ao administrador. Ver STREAMLIT_CLOUD.md.
+
+Complementos são snapshots independentes dentro da consulta, com arquivo original, hash, autor/data de importação e observações por caminho/grau/fonte. Append transacional evita perda em importações simultâneas; não sobrescreve fontes DataJud. Importação offline não comprova autenticação do fornecedor. Colunas jurídicas aguardam revisão; candidatos constam em abas próprias. Ver FONTES_COMPLEMENTARES.md.
 
 ## Modelo lógico
 

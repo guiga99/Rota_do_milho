@@ -45,7 +45,7 @@ Marcado significa concluído com evidência; os demais itens permanecem pendente
 ## Incremento 4 — publicação
 
 - [ ] Definir hospedagem, persistência e provedor de autenticação.
-- [ ] Restringir configurações ao administrador.
+- [x] Restringir configurações ao administrador.
 - [ ] Implementar armazenamento seguro e substituição de credenciais.
 - [ ] Verificar ausência de segredos em logs, exportações e Git.
 - [ ] Testar backup e restauração do banco e referências a respostas originais.
@@ -87,3 +87,18 @@ Evidências e limitações: [Incremento 2](INCREMENTO_2.md). Download público d
 - [ ] Confirmar integração oficial eproc para dados complementares.
 
 Evidências: [Incremento 3](INCREMENTO_3.md).
+
+## Orientações da issue #4
+
+- [x] Validar nova issue e registrar Streamlit Community Cloud como hospedagem escolhida.
+- [x] Avaliar as cinco fontes em documentação/páginas oficiais, distinguindo documentação de consulta real.
+- [x] Implementar PostgreSQL externo com TLS verificado e sem fallback local no Cloud.
+- [x] Implementar entrypoint Cloud que exige Google antes de acessar histórico/dados.
+- [x] Importar JSON Escavador/JUDIT com CNJ, arquivo original/hash, fonte/grau e inferências sinalizadas.
+- [x] Exportar observações complementares sem alterar os originais DataJud.
+- [ ] Escolher/provisionar PostgreSQL; configurar Secrets, Google OAuth e deploy na conta Streamlit.
+- [ ] Homologar login/banco/consulta/exportação e backup/restauração na implantação real.
+- [ ] Definir fornecedor/acesso/teto de custo e testar 3 CNJs antes de ampliar para 20.
+- [ ] Aprovar informações e critérios jurídicos com responsável definido.
+
+Detalhes: [Incremento 4](INCREMENTO_4.md), [roteiro Cloud](STREAMLIT_CLOUD.md), [comparação das fontes](FONTES_COMPLEMENTARES.md). Os testes locais/CI não substituem homologação no provedor escolhido.

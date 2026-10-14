@@ -2,10 +2,12 @@
 import csv,json,os
 from pathlib import Path
 import streamlit as st
-from rota.core import ASSUNTOS,TRIBUNAIS,ConsultaError,DataJud,Store,coletar
+from rota.core import ASSUNTOS,TRIBUNAIS,ConsultaError,DataJud,coletar
 from rota.export import exportar
 from rota.fields import inventario, periodo_cinco_anos, CAMPOS_PRINCIPAIS, tabela_principal
 from rota.access import proteger
+from rota.storage import criar_store, StorageError
+from rota.enrichment import FONTES, importar, linhas
 
 ROOT=Path(__file__).parent
 st.set_page_config(page_title='Rota do Milho',page_icon='🌽',layout='wide')
@@ -13,13 +15,20 @@ st.title('Rota do Milho')
 st.caption('Pesquisa tributária no TRF4 · TJSC por número CNJ · revisão jurídica necessária')
 try: settings=st.secrets.to_dict()
 except FileNotFoundError: settings={}
-identity=proteger(st,os.getenv('ROTA_AUTH_MODE',settings.get('access',{}).get('mode','local')),settings)
+cloud=globals().get('ROTA_CLOUD',False)
+identity=proteger(st,'google' if cloud else os.getenv('ROTA_AUTH_MODE',settings.get('access',{}).get('mode','local')),settings)
 if identity['mode']=='google':
     st.sidebar.caption('Conta autorizada: '+identity['email'])
     if st.sidebar.button('Sair da conta'):st.session_state.clear();st.logout()
     st.sidebar.caption('Perfil: administrador' if identity['role']=='admin' else 'Perfil: operador')
 
-store=Store(Path(os.getenv('ROTA_DATA_DIR',str(ROOT/'data/runtime')))/'consultas.sqlite3')
+@st.cache_resource
+def conectar_historico(url, data_dir, online):
+    return criar_store({'database':{'url':url}}, data_dir, cloud=online)
+try:
+    store=conectar_historico(settings.get('database',{}).get('url'),os.getenv('ROTA_DATA_DIR',str(ROOT/'data/runtime')),cloud)
+except StorageError as e:
+    st.error(str(e));st.stop()
 if 'api_key' not in st.session_state:st.session_state.api_key=os.getenv('DATAJUD_API_KEY',settings.get('datajud',{}).get('api_key',''))
 config,pesquisa,resultados,historico=st.tabs(['Configurações','Pesquisa','Resultados','Histórico'])
 with config:
@@ -41,7 +50,7 @@ with config:
                 st.session_state.teste=test
                 st.success(f"HTTP 200 · {test['registros']} registro(s) · {test['data']}")
                 st.write('Campos disponíveis:',test['campos'])
-            except ConsultaError as e:st.error(str(e))
+            except (ConsultaError,StorageError) as e:st.error(str(e))
             finally:
                 if api:api.close()
 with pesquisa:
@@ -61,7 +70,7 @@ with pesquisa:
                 res['executada_por']=identity['email'];store.salvar(res);st.session_state.result=res
                 if res.get('erro'):st.warning(res['erro'])
                 else:st.success(f"{res['status']} · {res['cnjs_unicos']} CNJs únicos. Abra Resultados.")
-            except ConsultaError as e:st.error(str(e))
+            except (ConsultaError,StorageError) as e:st.error(str(e))
             finally:
                 if api:api.close()
     else:
@@ -83,17 +92,20 @@ with pesquisa:
                 res['executada_por']=identity['email'];store.salvar(res);st.session_state.result=res
                 if res.get('erro'):st.warning(res['erro'])
                 else:st.success(f"{res['status']} · {res['cnjs_unicos']} CNJs únicos. Abra Resultados.")
-            except ConsultaError as e:st.error(str(e))
+            except (ConsultaError,StorageError) as e:st.error(str(e))
             finally:
                 if api:api.close()
     with st.expander('103 termos originais — catálogo pendente de mapeamento'):
         with (ROOT/'data/catalogos/termos_originais.csv').open(encoding='utf-8-sig') as f:st.dataframe(list(csv.DictReader(f)),hide_index=True)
 with historico:
-    history=store.listar()
-    st.caption('Histórico armazenado localmente no banco. Cada execução conserva sua resposta e seus registros de origem.')
+    try:history=store.listar()
+    except StorageError as e:st.error(str(e));history=[]
+    st.caption('Histórico em PostgreSQL externo.' if settings.get('database',{}).get('url') else 'Histórico local em SQLite.')
     if history:
         id=st.selectbox('Consulta anterior',[r[0] for r in history],format_func=lambda x:next(f'{r[1]} · {r[2]} · {r[0][:8]}' for r in history if r[0]==x))
-        if st.button('Abrir consulta'):st.session_state.result=store.obter(id);st.rerun()
+        if st.button('Abrir consulta'):
+            try:st.session_state.result=store.obter(id);st.rerun()
+            except StorageError as e:st.error(str(e))
     else:st.info('Nenhuma consulta registrada.')
 with resultados:
     res=st.session_state.get('result')
@@ -102,6 +114,27 @@ with resultados:
         st.write(f"**{res['status']}** · {res['cnjs_unicos']} CNJs · {res['recebidos']} registros recebidos")
         if res.get('erro'):st.warning(res['erro'])
         st.caption('Filtros abaixo atuam somente sobre a amostra coletada. Registros do mesmo processo em graus diferentes são preservados.')
+        with st.expander('Complementar informações com JSON de fornecedor'):
+            st.caption('Importe somente respostas obtidas com acesso autorizado. O arquivo é preservado no histórico privado; sua autenticidade não é comprovada por este importador. Empresa, CNPJ, advogado, polo, valor e evidências são candidatos para revisão.')
+            if identity['role']=='admin':
+                with st.form('complementar_'+res['id']):
+                    fornecedor=st.selectbox('Formato da resposta',list(FONTES))
+                    arquivo=st.file_uploader('JSON de um processo desta consulta (até 5 MiB)',type=['json'])
+                    enviar=st.form_submit_button('Importar JSON e registrar fonte')
+                if enviar:
+                    try:
+                        if arquivo is None:raise ValueError('Selecione um arquivo JSON.')
+                        complemento=importar(arquivo.getvalue(),fornecedor,{r['cnj'] for r in res['registros']},identity['email'])
+                        atualizado,incluido=store.complementar(res['id'],complemento)
+                        if not incluido:
+                            st.info('Este arquivo já foi importado para esta consulta.')
+                        else:
+                            st.session_state.result=atualizado;st.rerun()
+                    except (ValueError,StorageError) as e:st.error(str(e))
+            else:st.info('A importação de fontes é restrita aos administradores.')
+            if res.get('complementos'):
+                st.dataframe(list(linhas(res['complementos'])),hide_index=True,width='stretch')
+                st.warning('Observações não foram aprovadas juridicamente. Empresas podem incluir entes públicos; valores e resultados de diferentes graus podem divergir. Consulte a fonte antes de escolher o contribuinte ou concluir sobre trânsito e resultado favorável.')
         transito=st.checkbox('Somente indício textual de trânsito — exige revisão')
         qualidade=st.multiselect('Qualidade técnica',['Validado tecnicamente','Com ressalvas','Não exportável'],default=['Validado tecnicamente','Com ressalvas'])
         records=[r for r in res['registros'] if r['qualidade'] in qualidade and (not transito or r['indicio_transito'])]

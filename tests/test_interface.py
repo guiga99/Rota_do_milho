@@ -5,7 +5,9 @@ from streamlit.testing.v1 import AppTest
 
 class InterfaceTests(unittest.TestCase):
     def test_configuracao_e_erro_sem_chave(self):
-        with tempfile.TemporaryDirectory() as d,patch.dict(os.environ,{'ROTA_DATA_DIR':d,'DATAJUD_API_KEY':''}):
+        import streamlit as st
+        original_get_option=st.get_option
+        with tempfile.TemporaryDirectory() as d,patch.dict(os.environ,{'ROTA_DATA_DIR':d,'DATAJUD_API_KEY':''}),patch('streamlit.get_option',side_effect=lambda key:'127.0.0.1' if key=='server.address' else original_get_option(key)):
             app=AppTest.from_file(str(Path(__file__).parents[1]/'app.py')).run()
             self.assertEqual(len(app.exception),0)
             from rota.fields import periodo_cinco_anos

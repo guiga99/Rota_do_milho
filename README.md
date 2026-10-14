@@ -2,7 +2,7 @@
 
 MVP para localizar processos tributários no DataJud/CNJ, revisar candidatos e exportar consultas em XLSX pelo navegador. Tribunal inicial: TRF4.
 
-**Estado atual:** primeiro MVP local implementado. Configuração da chave em sessão, teste DataJud, pesquisa TRF4, validação técnica, histórico SQLite e download XLSX pela interface. Suporte ao login Google da equipe e tabela principal configurável foram implementados. Configuração OAuth real, cofre para credenciais de integrações e hospedagem pública da aplicação Python permanecem pendentes.
+**Estado atual:** MVP local disponível; entrada protegida para Streamlit Community Cloud preparada. Configuração da chave em sessão, teste DataJud, pesquisa TRF4/TJSC, validação técnica, tabela configurável e XLSX. Histórico SQLite local ou PostgreSQL externo com TLS; importação de JSON Escavador/JUDIT com proveniência. Google OAuth real, provisionamento do banco, consultas comerciais autenticadas e hospedagem pública da aplicação Python permanecem pendentes.
 
 Para iniciar, siga [Executar no Windows ou Linux](docs/EXECUTAR.md). No Windows com Python 3.12, execute `iniciar_windows.bat`.
 
@@ -13,6 +13,8 @@ Para iniciar, siga [Executar no Windows ou Linux](docs/EXECUTAR.md). No Windows 
 [Amostra real de 20 processos e relatório do incremento](docs/INCREMENTO_2.md). O painel permite baixar o Excel e escolher campos prioritários. O período padrão do aplicativo passou a ser os últimos cinco anos.
 
 [Incremento da issue #3: tabela enxuta, login Google e avaliação TJSC/eproc](docs/INCREMENTO_3.md). [Como configurar o login da equipe](docs/ACESSO_GOOGLE.md). TJSC disponível como consulta opcional por número CNJ; o padrão tributário continua no TRF4.
+
+[Incremento da issue #4: Cloud, persistência e fontes complementares](docs/INCREMENTO_4.md). [Implantar no Streamlit Cloud](docs/STREAMLIT_CLOUD.md): usar `cloud_app.py`, Google e PostgreSQL obrigatório. [Comparação dos cinco fornecedores e sete campos faltantes](docs/FONTES_COMPLEMENTARES.md).
 
 ## Documentação
 
@@ -29,7 +31,7 @@ Para iniciar, siga [Executar no Windows ou Linux](docs/EXECUTAR.md). No Windows 
 
 Configurar a chave DataJud → testar conexão real → consultar uma amostra pequena do TRF4 → validar metadados → revisar resultados → baixar XLSX pelo navegador.
 
-Python 3.12+, Streamlit, cliente HTTP, SQLite e OpenPyXL são as tecnologias propostas. As dependências diretas estão em `requirements.txt`; o conjunto instalado e testado está fixado em `requirements-lock.txt`.
+Python 3.12+, Streamlit, cliente HTTP, SQLite/PostgreSQL e OpenPyXL. Dependências diretas em `requirements.txt`; conjunto instalado/testado em `requirements-lock.txt`.
 
 ## Limites da fonte
 

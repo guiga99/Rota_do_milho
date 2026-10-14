@@ -120,6 +120,16 @@ class Store:
     def obter(self,id):
         with self.connect() as c:row=c.execute('SELECT payload FROM consultas WHERE id=?',(id,)).fetchone()
         return json.loads(row[0]) if row else None
+    def complementar(self,id,complemento):
+        with self.connect() as c:
+            c.execute('BEGIN IMMEDIATE')
+            row=c.execute('SELECT payload FROM consultas WHERE id=?',(id,)).fetchone()
+            if not row:raise ValueError('Consulta não encontrada no histórico.')
+            result=json.loads(row[0]);existing=result.get('complementos',[])
+            if any(x['sha256_arquivo']==complemento['sha256_arquivo'] and x['fornecedor']==complemento['fornecedor'] for x in existing):return result,False
+            result['complementos']=[*existing,complemento]
+            c.execute('UPDATE consultas SET payload=? WHERE id=?',(json.dumps(result,ensure_ascii=False),id))
+            return result,True
 
 def coletar(api,store,codigos,limite=100,inicio=None,fim=None,numero=None):
     if not 1<=limite<=100: raise ConsultaError('O limite deve estar entre 1 e 100.')
