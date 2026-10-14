@@ -102,3 +102,13 @@ Evidências: [Incremento 3](INCREMENTO_3.md).
 - [ ] Aprovar informações e critérios jurídicos com responsável definido.
 
 Detalhes: [Incremento 4](INCREMENTO_4.md), [roteiro Cloud](STREAMLIT_CLOUD.md), [comparação das fontes](FONTES_COMPLEMENTARES.md). Os testes locais/CI não substituem homologação no provedor escolhido.
+
+## Revisão pela equipe — aprovação no chat
+
+- [x] Implementar estados por campo/fonte e registrar comentário, evidência, revisor e data.
+- [x] Preservar origem, propostas de correção e histórico separado por revisor.
+- [x] Gravação transacional com bloqueio de versão antiga da mesma pessoa.
+- [x] Exportar registros de revisão dos CNJs selecionados em XLSX e JSON.
+- [ ] Homologar com contas Google reais dos colegas após ativação da aplicação.
+
+Issue #5: Escavador, banco da equipe e teste sem cobrança escolhidos. Acesso privado/banco/OAuth permanecem pendentes. Ver [Revisão de campos](REVISAO_CAMPOS.md).

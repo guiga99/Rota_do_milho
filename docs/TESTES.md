@@ -40,7 +40,7 @@ Para cada execução registrar versão do código, ambiente, data, alvo, quantid
 
 ## Situação atual
 
-A suíte atual contém **32 testes automatizados aprovados**, em 14/10/2026 UTC, Python 3.12/Linux. Inclui AppTest, exportação, persistência, paginação, autenticação, timeout/retry, regras Google, bloqueio Cloud sem OAuth/banco e enriquecimento sintético. Este é o resultado atual; o primeiro incremento tinha 13 testes.
+A suíte atual contém **39 testes automatizados aprovados**, em 14/10/2026 UTC, Python 3.12/Linux. Inclui AppTest, exportação, persistência, paginação, autenticação, timeout/retry, regras Google, bloqueio Cloud sem OAuth/banco, enriquecimento e revisão por campo com dados sintéticos. Este é o resultado atual; o primeiro incremento tinha 13 testes.
 
 O primeiro incremento executou consulta real com HTTP 200 e 10 CNJs, gerando XLSX reaberto por OpenPyXL. O download pelo Chromium também foi realizado, com 10 registros conferidos. A confirmação no Excel do Windows permanece pendente. Consulte [Relatório do incremento](VALIDACAO_INCREMENTO_1.md) para limites e evidências.
 
@@ -64,3 +64,7 @@ Reproduzir (Linux, Python 3.12):
 ```
 
 PostgreSQL exige Docker/OpenSSL; Chromium exige dependências do sistema. Scripts usam `/usr/bin/chromium` se disponível ou o browser instalado pelo Playwright. Dependências de navegador são de desenvolvimento; não entram no runtime Streamlit. CI executa a suite e integração PostgreSQL. Google OAuth real, consulta comercial e homologação na hospedagem continuam pendentes: STREAMLIT_CLOUD.md.
+
+## Revisão por colegas
+
+Sete testes específicos adicionais verificam identidade/permissão, ausência sem confirmação, comentário/evidência/correção, versões por revisor, snapshot antigo, gravação concorrente/reabertura SQLite e exportação seletiva/segura. Atualização de coleta conserva anotações já gravadas, mesmo com payload antigo. PostgreSQL verifica revisões concorrentes, preservação após atualização e reinício; Chromium salva a revisão e reabre XLSX/JSON. Fluxo Google do operador testado com identidade controlada, sem login Google real. Ver REVISAO_CAMPOS.md.

@@ -108,13 +108,28 @@ def normalizar(s,codigos,inicio=None,fim=None):
     tj=[m for m in moves if re.search(r'tr[aâ]nsit(?:o|ad[oa]).*julgad',str(m.get('nome') or ''),re.I)]
     return {'cnj':n,'origem_id':s.get('id'),'tribunal':s.get('tribunal'),'grau':s.get('grau'),'classe':(s.get('classe') or {}).get('nome'),'orgao':(s.get('orgaoJulgador') or {}).get('nome'),'assuntos':'; '.join(str(a.get('codigo'))+' — '+str(a.get('nome') or '') for a in assuntos if isinstance(a,dict)),'ajuizamento':s.get('dataAjuizamento'),'qualidade':'Não exportável' if not cnj_valido(n) else ('Com ressalvas' if problemas else 'Validado tecnicamente'),'ressalvas':'; '.join(dict.fromkeys(problemas)),'indicio_transito':bool(tj),'evidencia_transito':json.dumps(tj,ensure_ascii=False) if tj else None,'movimentos':moves,'original':s}
 
+def conservar_anotacoes(result,previous):
+    merged=dict(result)
+    for field in ('revisoes','complementos'):
+        items=list(previous.get(field,[]))
+        def key(x):return x['id'] if field=='revisoes' else (x['fornecedor'],x['sha256_arquivo'])
+        seen={key(x) for x in items}
+        for x in result.get(field,[]):
+            if key(x) not in seen:items.append(x);seen.add(key(x))
+        if items:merged[field]=items
+    return merged
+
 class Store:
     def __init__(self,path):
         self.path=Path(path);self.path.parent.mkdir(parents=True,exist_ok=True)
         with self.connect() as c:c.execute('CREATE TABLE IF NOT EXISTS consultas (id TEXT PRIMARY KEY, criada TEXT, status TEXT, payload TEXT)')
     def connect(self): return sqlite3.connect(self.path)
     def salvar(self,result):
-        with self.connect() as c:c.execute('INSERT OR REPLACE INTO consultas VALUES (?,?,?,?)',(result['id'],result['criada'],result['status'],json.dumps(result,ensure_ascii=False)))
+        with self.connect() as c:
+            c.execute('BEGIN IMMEDIATE')
+            row=c.execute('SELECT payload FROM consultas WHERE id=?',(result['id'],)).fetchone()
+            payload=conservar_anotacoes(result,json.loads(row[0]) if row else {})
+            c.execute('INSERT OR REPLACE INTO consultas VALUES (?,?,?,?)',(result['id'],result['criada'],result['status'],json.dumps(payload,ensure_ascii=False)))
     def listar(self):
         with self.connect() as c:return c.execute('SELECT id,criada,status FROM consultas ORDER BY criada DESC').fetchall()
     def obter(self,id):
@@ -130,6 +145,15 @@ class Store:
             result['complementos']=[*existing,complemento]
             c.execute('UPDATE consultas SET payload=? WHERE id=?',(json.dumps(result,ensure_ascii=False),id))
             return result,True
+    def revisar(self,id,**kwargs):
+        from .reviews import registrar
+        with self.connect() as c:
+            c.execute('BEGIN IMMEDIATE')
+            row=c.execute('SELECT payload FROM consultas WHERE id=?',(id,)).fetchone()
+            if not row:raise ValueError('Consulta não encontrada no histórico.')
+            result=registrar(json.loads(row[0]),**kwargs)
+            c.execute('UPDATE consultas SET payload=? WHERE id=?',(json.dumps(result,ensure_ascii=False),id))
+            return result
 
 def coletar(api,store,codigos,limite=100,inicio=None,fim=None,numero=None):
     if not 1<=limite<=100: raise ConsultaError('O limite deve estar entre 1 e 100.')

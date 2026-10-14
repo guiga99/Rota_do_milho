@@ -19,7 +19,7 @@ SQLite destina-se ao uso local. Filesystem/container do Cloud não substitui per
 
 Pool por processo: 2 conexões e até 2 adicionais, com verificação antes do uso. Réplicas/processos multiplicam o total. Erros não expõem DSN/credenciais. Não há migração automática do SQLite: preservar backup e migrar com conciliação antes de uso operacional. Crescimento exigirá índices, retenção e armazenamento de arquivos próprios.
 
-Importação bloqueia a linha por transação, evitando perder complementos simultâneos. Histórico é compartilhado por usuários autorizados. Operadores consultam/exportam; administradores configuram/importam. Separação por cliente/tenant e cofre próprio não foram implementados. Não guardar credenciais de tribunais nos payloads. Nenhum cliente comercial ativo nesta versão.
+Importação e revisão bloqueiam a linha por transação, evitando perder anotações simultâneas. Histórico é compartilhado por usuários autorizados. Operadores consultam/exportam/revisam; administradores também configuram/importam. Separação por cliente/tenant e cofre próprio não foram implementados. Não guardar credenciais de tribunais nos payloads. Nenhum cliente comercial ativo nesta versão.
 
 ## Homologação na implantação
 

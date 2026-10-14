@@ -8,6 +8,7 @@ from rota.fields import inventario, periodo_cinco_anos, CAMPOS_PRINCIPAIS, tabel
 from rota.access import proteger
 from rota.storage import criar_store, StorageError
 from rota.enrichment import FONTES, importar, linhas
+from rota.reviews import ESTADOS, alvos, minha_revisao, linhas_revisoes
 
 ROOT=Path(__file__).parent
 st.set_page_config(page_title='Rota do Milho',page_icon='🌽',layout='wide')
@@ -114,6 +115,31 @@ with resultados:
         st.write(f"**{res['status']}** · {res['cnjs_unicos']} CNJs · {res['recebidos']} registros recebidos")
         if res.get('erro'):st.warning(res['erro'])
         st.caption('Filtros abaixo atuam somente sobre a amostra coletada. Registros do mesmo processo em graus diferentes são preservados.')
+        with st.expander('Validar campos com a equipe'):
+            st.caption('Sua avaliação fica vinculada à conta e ao valor desta fonte. Comentário é obrigatório; confirmação e correção exigem evidência. Conferência de campo não constitui aceite jurídico do processo.')
+            opcoes=alvos(res)
+            numero_revisao=st.selectbox('Processo para revisar',list(dict.fromkeys(t['cnj'] for t in opcoes)),key='revisar_cnj_'+res['id'])
+            do_processo=[t for t in opcoes if t['cnj']==numero_revisao]
+            if do_processo:
+                target=st.selectbox('Campo e fonte para revisar',do_processo,format_func=lambda t:f"{t['campo']} · {t['fonte']} · grau {t['grau']} · {t['alvo_id'][:8]}",key='revisar_alvo_'+res['id'])
+                st.write('Valor da fonte:');st.json(target['valor_original'])
+                current=minha_revisao(res,target['alvo_id'],identity['email'])
+                if current:st.info(f"Sua última avaliação: {current['estado']} · {current['revisada_utc']}")
+                with st.form('revisao_'+res['id']+'_'+target['alvo_id']+'_'+(current['id'] if current else 'nova')):
+                    estado=st.radio('Resultado da conferência',ESTADOS,index=None)
+                    comentario=st.text_area('Comentário da revisão',max_chars=4000)
+                    proposta=st.text_area('Valor proposto (somente se Corrigir)',max_chars=4000)
+                    evidencia=st.text_area('Fonte ou evidência da conferência',max_chars=4000,help='Informe referência, documento ou trecho que permita verificar a conclusão.')
+                    gravar=st.form_submit_button('Salvar revisão do campo')
+                if gravar:
+                    try:
+                        atualizado=store.revisar(res['id'],alvo_id=target['alvo_id'],estado=estado,comentario=comentario,proposta=proposta,evidencia=evidencia,identity=identity,anterior=current['id'] if current else None)
+                        st.session_state.result=atualizado;st.session_state.revisao_salva=True;st.rerun()
+                    except (ValueError,StorageError) as e:st.error(str(e))
+                if st.session_state.pop('revisao_salva',False):st.success('Revisão registrada com revisor e data. O valor de origem foi preservado.')
+            if res.get('revisoes'):
+                st.dataframe(list(linhas_revisoes(res)),hide_index=True,width='stretch')
+                st.caption('Atual do revisor indica a avaliação mais recente daquela pessoa; avaliações de colegas são preservadas. Origem vigente indica se o campo ainda corresponde ao mesmo snapshot.')
         with st.expander('Complementar informações com JSON de fornecedor'):
             st.caption('Importe somente respostas obtidas com acesso autorizado. O arquivo é preservado no histórico privado; sua autenticidade não é comprovada por este importador. Empresa, CNPJ, advogado, polo, valor e evidências são candidatos para revisão.')
             if identity['role']=='admin':

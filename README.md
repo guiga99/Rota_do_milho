@@ -6,6 +6,8 @@ MVP para localizar processos tributários no DataJud/CNJ, revisar candidatos e e
 
 Para iniciar, siga [Executar no Windows ou Linux](docs/EXECUTAR.md). No Windows com Python 3.12, execute `iniciar_windows.bat`.
 
+[Revisão de campos pela equipe](docs/REVISAO_CAMPOS.md): Confirmado, Corrigir ou Informação insuficiente, com comentário, evidência, revisor/data e histórico por pessoa. XLSX inclui REVISOES_CAMPOS. Implantação e login Google reais continuam pendentes.
+
 ## Painel de decisões
 
 [Perguntas, escolhas e orientações do projeto](https://guiga99.github.io/Rota_do_milho/) — painel web estático. As escolhas são confirmadas em issues do GitHub; rascunhos locais não constituem aprovação. Veja [como registrar respostas](docs/DECISOES.md). A aplicação de consultas continua local nesta versão.

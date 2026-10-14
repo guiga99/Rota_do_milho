@@ -55,3 +55,7 @@ A escolha Google e a preferência por tabela enxuta foram implementadas no códi
 ## Registro da issue #4
 
 Streamlit Community Cloud escolhido, com persistência antes de uso operacional. Sete campos complementares e cinco fornecedores estudados: FONTES_COMPLEMENTARES.md. Entrada Cloud protegida, PostgreSQL e importação offline preparados; implantação e consulta comercial real permanecem pendentes. As novas perguntas `fornecedor_piloto`, `persistencia_cloud` e `orcamento_piloto` registram escolhas explícitas, sem contratação automática. Não inferir autorização de custo a partir de uma sugestão de fornecedor.
+
+## Issue #5 e aprovação da revisão no chat
+
+Issue #5 validada: Escavador, banco existente da equipe, teste sem cobrança. Não há autorização de compra/consumo pago. No chat, o responsável aprovou a revisão por colegas com Confirmado/Corrigir/Informação insuficiente; implementada conforme REVISAO_CAMPOS.md. Essa aprovação é documentada, sem criar uma issue em nome do usuário. Revisões privadas dos processos não são enviadas ao painel de decisões.

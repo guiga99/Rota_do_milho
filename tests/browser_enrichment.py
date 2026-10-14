@@ -68,10 +68,23 @@ with tempfile.TemporaryDirectory(prefix='rota-browser-') as d:
                 page.get_by_text(re.compile('Observações não foram aprovadas juridicamente')).wait_for(state='attached')
                 page.wait_for_function('document.querySelector(\'[data-testid="stApp"]\')?.getAttribute("data-test-script-state") === "notRunning"')
                 assert saved['registros']==result['registros']
+                page.get_by_text('Validar campos com a equipe',exact=True).click()
+                radio=page.get_by_role('radio',name='Confirmado',exact=True)
+                radio.locator('..').click(timeout=5000)
+                assert page.get_by_role('radio',name='Confirmado',exact=True).is_checked()
+                page.get_by_label('Comentário da revisão',exact=True).fill('Campos conferidos na fixture TESTE.')
+                page.get_by_label('Fonte ou evidência da conferência',exact=True).fill('Documento sintético TESTE')
+                page.get_by_role('button',name='Salvar revisão do campo',exact=True).click()
+                page.get_by_text('Revisão registrada com revisor e data. O valor de origem foi preservado.',exact=True).wait_for(state='attached')
+                page.wait_for_function('document.querySelector(\'[data-testid="stApp"]\')?.getAttribute("data-test-script-state") === "notRunning"')
+                reviewed=store.obter(result['id'])
+                assert reviewed['revisoes'][0]['revisor']=='operador local'
+                assert reviewed['registros']==result['registros']
                 with page.expect_download() as dl:page.get_by_role('button',name='Baixar XLSX verificado',exact=True).click()
                 path=root/'download.xlsx';dl.value.save_as(path)
                 workbook=load_workbook(path)
                 assert 'COMPLEMENTOS' in workbook.sheetnames
+                assert workbook['REVISOES_CAMPOS'].max_row==2
                 assert workbook['PROCESSOS']['A2'].value==numero()
                 assert workbook['PROCESSOS']['M2'].value is None
                 with page.expect_download() as dl:page.get_by_role('button',name='Baixar evidências JSON',exact=True).click()
@@ -81,7 +94,7 @@ with tempfile.TemporaryDirectory(prefix='rota-browser-') as d:
                 assert c['sha256_arquivo']==hashlib.sha256(raw).hexdigest()
                 assert any(o['status']=='inferido_fornecedor' for o in c['observacoes'])
                 browser.close()
-            print('OK: navegador rejeita CNJ diferente, importa JSON JUDIT, preserva histórico/original/hash e baixa XLSX/JSON com candidatos separados. Dados sintéticos.')
+            print('OK: navegador rejeita CNJ diferente, importa JSON JUDIT, salva revisão atribuída e baixa XLSX/JSON com histórico/original/hash preservados. Dados sintéticos.')
         finally:
             process.terminate()
             try:process.wait(timeout=10)

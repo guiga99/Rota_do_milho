@@ -6,7 +6,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.engine import make_url
 from sqlalchemy.exc import SQLAlchemyError
 
-from .core import Store
+from .core import Store, conservar_anotacoes
 
 
 class StorageError(RuntimeError):
@@ -42,10 +42,15 @@ class PostgresStore:
             raise StorageError('Falha no histórico PostgreSQL. A consulta não foi persistida; verifique a conexão antes de continuar.') from None
 
     def salvar(self, result):
-        self._execute('INSERT INTO consultas (id,criada,status,payload) VALUES (:id,:criada,:status,:payload) '
-                      'ON CONFLICT(id) DO UPDATE SET criada=excluded.criada,status=excluded.status,payload=excluded.payload',
-                      {'id':result['id'],'criada':result['criada'],'status':result['status'],
-                       'payload':json.dumps(result, ensure_ascii=False)})
+        try:
+            with self.engine.begin() as c:
+                row=c.execute(text('SELECT payload FROM consultas WHERE id=:id FOR UPDATE'),{'id':result['id']}).fetchone()
+                payload=conservar_anotacoes(result,json.loads(row[0]) if row else {})
+                c.execute(text('INSERT INTO consultas (id,criada,status,payload) VALUES (:id,:criada,:status,:payload) '
+                          'ON CONFLICT(id) DO UPDATE SET criada=excluded.criada,status=excluded.status,payload=excluded.payload'),
+                          {'id':result['id'],'criada':result['criada'],'status':result['status'],'payload':json.dumps(payload,ensure_ascii=False)})
+        except SQLAlchemyError:
+            raise StorageError('Não foi possível salvar a consulta no PostgreSQL. Verifique a conexão antes de continuar.') from None
 
     def listar(self):
         return self._execute('SELECT id,criada,status FROM consultas ORDER BY criada DESC', fetch=True)
@@ -69,6 +74,18 @@ class PostgresStore:
 
     def close(self):
         self.engine.dispose()
+
+    def revisar(self,id,**kwargs):
+        from .reviews import registrar
+        try:
+            with self.engine.begin() as c:
+                row=c.execute(text('SELECT payload FROM consultas WHERE id=:id FOR UPDATE'),{'id':id}).fetchone()
+                if not row:raise ValueError('Consulta não encontrada no histórico.')
+                result=registrar(json.loads(row[0]),**kwargs)
+                c.execute(text('UPDATE consultas SET payload=:payload WHERE id=:id'),{'id':id,'payload':json.dumps(result,ensure_ascii=False)})
+                return result
+        except SQLAlchemyError:
+            raise StorageError('Não foi possível salvar a revisão. Verifique a conexão antes de continuar.') from None
 
 
 def criar_store(settings, data_dir, cloud=False):

@@ -13,6 +13,7 @@ from sqlalchemy import text
 from sqlalchemy.engine import URL
 import psycopg
 from rota.storage import PostgresStore, StorageError
+from rota.reviews import alvos
 
 IMAGE='postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24'
 
@@ -62,17 +63,26 @@ def main():
             else:raise AssertionError('CA não confiável foi aceita.')
             store=PostgresStore(url('server.crt'))
             payload={'id':'fixture-sintetica','criada':'2026-01-01T00:00:00Z','status':'Concluída',
-                     'registros':[{'teste':'çã','origem':[None,1]}],'complementos':[]}
+                     'registros':[{'cnj':'processo-sintetico','grau':1,'original':{'teste':'çã','origem':[None,1]}}],'complementos':[]}
             store.salvar(payload)
             payload['status']='Revisão pendente';store.salvar(payload)
             assert len(store.listar())==1
             assert store.obter(payload['id'])==payload
             assert store.obter("'; DROP TABLE consultas; --") is None
-            def complementar(i):return store.complementar(payload['id'],{'fornecedor':'TESTE','sha256_arquivo':str(i)})
+            def complementar(i):return store.complementar(payload['id'],{'fornecedor':'TESTE','sha256_arquivo':str(i),'cnj':'processo-sintetico','observacoes':[]})
             with ThreadPoolExecutor(max_workers=4) as pool:assert all(new for _,new in pool.map(complementar,range(4)))
             payload=store.obter(payload['id'])
             assert len(payload['complementos'])==4
             assert store.complementar(payload['id'],payload['complementos'][0])[1] is False
+            target=next(t for t in alvos(payload) if t['campo']=='teste')
+            def revisar(i):
+                return store.revisar(payload['id'],alvo_id=target['alvo_id'],estado='Confirmado',
+                    comentario='Conferência sintética',proposta='',evidencia='Fixture TESTE',
+                    identity={'email':f'colega{i}@example.com','role':'operator','mode':'google'})
+            with ThreadPoolExecutor(max_workers=4) as pool:list(pool.map(revisar,range(4)))
+            payload=store.obter(payload['id']);assert len(payload['revisoes'])==4
+            stale={**payload,'revisoes':[],'complementos':[]};store.salvar(stale)
+            assert store.obter(payload['id'])==payload
             with store.engine.connect() as c:
                 assert c.execute(text('SELECT ssl FROM pg_stat_ssl WHERE pid=pg_backend_pid()')).scalar() is True
             store.close();store=None
@@ -80,7 +90,7 @@ def main():
             port=json.loads(run('docker','inspect',name))[0]['NetworkSettings']['Ports']['5432/tcp'][0]['HostPort']
             store=PostgresStore(url('server.crt'))
             assert store.obter(payload['id'])==payload
-            print('PostgreSQL 17: TLS verificado, CA incorreta rejeitada, JSON intacto, upsert, importações concorrentes e persistência após reinício aprovados. Dados sintéticos.')
+            print('PostgreSQL 17: TLS verificado, CA incorreta rejeitada, JSON intacto, upsert, importações/revisões concorrentes e persistência após reinício aprovados. Dados sintéticos.')
         finally:
             if store:store.close()
             if started:run('docker','rm','--force','--volumes',name)
