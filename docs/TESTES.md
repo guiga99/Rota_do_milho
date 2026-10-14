@@ -40,7 +40,7 @@ Para cada execução registrar versão do código, ambiente, data, alvo, quantid
 
 ## Situação atual
 
-A suíte atual contém **39 testes automatizados aprovados**, em 14/10/2026 UTC, Python 3.12/Linux. Inclui AppTest, exportação, persistência, paginação, autenticação, timeout/retry, regras Google, bloqueio Cloud sem OAuth/banco, enriquecimento e revisão por campo com dados sintéticos. Este é o resultado atual; o primeiro incremento tinha 13 testes.
+A suíte atual contém **45 testes automatizados aprovados**, em 14/10/2026 UTC, Python 3.12/Linux. Inclui AppTest, exportação, persistência, paginação, autenticação, timeout/retry, regras Google, bloqueio Cloud sem OAuth/banco, enriquecimento, revisão por campo e pré-validação Streamlit com dados sintéticos. Este é o resultado atual; o primeiro incremento tinha 13 testes.
 
 O primeiro incremento executou consulta real com HTTP 200 e 10 CNJs, gerando XLSX reaberto por OpenPyXL. O download pelo Chromium também foi realizado, com 10 registros conferidos. A confirmação no Excel do Windows permanece pendente. Consulte [Relatório do incremento](VALIDACAO_INCREMENTO_1.md) para limites e evidências.
 
@@ -68,3 +68,7 @@ PostgreSQL exige Docker/OpenSSL; Chromium exige dependências do sistema. Script
 ## Revisão por colegas
 
 Sete testes específicos adicionais verificam identidade/permissão, ausência sem confirmação, comentário/evidência/correção, versões por revisor, snapshot antigo, gravação concorrente/reabertura SQLite e exportação seletiva/segura. Atualização de coleta conserva anotações já gravadas, mesmo com payload antigo. PostgreSQL verifica revisões concorrentes, preservação após atualização e reinício; Chromium salva a revisão e reabre XLSX/JSON. Fluxo Google do operador testado com identidade controlada, sem login Google real. Ver REVISAO_CAMPOS.md.
+
+## Pré-validação Streamlit
+
+Seis testes adicionais verificam callback HTTPS exato, campos obrigatórios/placeholder, administradores autorizados, cookie, TLS e erros sanitizados. O teste de banco é somente leitura e rejeita TLS não verificado antes de conectar; também foi executado contra PostgreSQL 17 descartável com certificado verificado. Essa evidência não comprova conta Streamlit, Google real nem banco da equipe. O roteiro registra a ação do responsável de criar a aplicação e informar sua URL pública.

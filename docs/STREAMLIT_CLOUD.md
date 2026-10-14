@@ -2,6 +2,21 @@
 
 Escolha da [issue #4](https://github.com/guiga99/Rota_do_milho/issues/4): piloto gerenciado com persistência antes de dados operacionais. Código preparado; **nenhuma aplicação Streamlit pública foi criada nesta etapa**. GitHub Pages continua como painel de decisões.
 
+## Ação inicial na conta do responsável
+
+Esta etapa depende da sessão do responsável no Streamlit, que não está conectada a este chat. Em [share.streamlit.io](https://share.streamlit.io/), entre na conta e escolha **Create app**. Preencha:
+
+| Campo | Valor |
+|---|---|
+| Repository | `guiga99/Rota_do_milho` |
+| Branch | `main` |
+| Main file path | `cloud_app.py` |
+| Python version (Advanced settings) | `3.12` |
+
+Escolha um subdomínio disponível e publique inicialmente **sem Secrets**, se ainda não os tiver. A aplicação mostrará o aviso de login não configurado e bloqueará acesso às consultas/banco. Essa publicação inicial serve para reservar e obter a URL HTTPS; não é homologação nem ativação operacional. **Informe no chat somente a URL pública obtida.** Com ela definimos o callback Google exato. Não informe login/senha nem o conteúdo dos Secrets no chat ou GitHub.
+
+Depois da URL, configure OAuth web e banco da equipe na área privada conforme os passos abaixo. Se o Streamlit não listar o repositório, confira a conta GitHub vinculada e a autorização dessa conta para `guiga99/Rota_do_milho`.
+
 ## Configuração concreta
 
 1. Entrar no [Streamlit Community Cloud](https://share.streamlit.io/) com conta autorizada ao repositório. Criar aplicação: **guiga99/Rota_do_milho**, branch **main**, arquivo **cloud_app.py**, Python **3.12**. Escolher subdomínio e obter URL HTTPS.
@@ -12,6 +27,26 @@ Escolha da [issue #4](https://github.com/guiga99/Rota_do_milho/issues/4): piloto
 6. Iniciar aplicação e executar homologação abaixo. Sem OAuth, acesso bloqueia antes do banco; sem PostgreSQL, telas de consulta bloqueiam. Não existe fallback online para SQLite.
 
 Dependências diretas e lock versionados. `cloud_app.py` força Google, independentemente de variável/modo local. Loopback global foi retirado para compatibilidade Cloud; comandos locais e `iniciar_windows.bat` continuam usando `--server.address 127.0.0.1`. `app.py` sem loopback e sem Google bloqueia acesso.
+
+## Verificar os Secrets antes da ativação
+
+O script `scripts/verificar_streamlit.py` verifica configuração real, administradores/usuários, callback exato, campos obrigatórios e DSN com TLS. O modelo de exemplo é rejeitado enquanto contiver placeholders. Lê arquivo privado e informa apenas nomes dos campos pendentes; não imprime credenciais nem realiza login OAuth.
+
+No computador autorizado, com `.streamlit/secrets.toml` privado preenchido:
+
+```bash
+.venv/bin/python scripts/verificar_streamlit.py --app-url https://SEU_SUBDOMINIO.streamlit.app
+```
+
+No Windows, substitua `.venv/bin/python` por `.venv\Scripts\python.exe`. A verificação padrão é offline. Para testar o banco com a configuração autorizada:
+
+```bash
+.venv/bin/python scripts/verificar_streamlit.py --app-url https://SEU_SUBDOMINIO.streamlit.app --testar-banco
+```
+
+O teste usa transação somente leitura, SELECT e TLS verificado; não cria tabela, migra ou grava dados. Confirma conexão e presença do histórico, mas não comprova todas as permissões de gravação. Inicialização do banco e coleta precisam de homologação na aplicação. Arquivo com outro nome pode ser informado por `--config`; não copie o arquivo privado ao Git. Cole os valores reais somente nos **Settings → Secrets** da aplicação Streamlit.
+
+Saída 0 significa que as verificações executadas passaram; 2 indica configuração pendente/inválida; 3 indica falha na conexão. Verificação offline não comprova conta Google, banco acessível ou implantação. Dados sintéticos cobrem o script na suite e PostgreSQL descartável; ainda falta validar o banco da equipe.
 
 ## Persistência e limites
 

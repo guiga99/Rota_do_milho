@@ -8,6 +8,8 @@ Para iniciar, siga [Executar no Windows ou Linux](docs/EXECUTAR.md). No Windows 
 
 [Revisão de campos pela equipe](docs/REVISAO_CAMPOS.md): Confirmado, Corrigir ou Informação insuficiente, com comentário, evidência, revisor/data e histórico por pessoa. XLSX inclui REVISOES_CAMPOS. Implantação e login Google reais continuam pendentes.
 
+**Próximo passo Streamlit:** [criar a aplicação na conta do responsável](docs/STREAMLIT_CLOUD.md#ação-inicial-na-conta-do-responsável) e informar sua URL pública. O roteiro inclui verificação dos Secrets e teste de PostgreSQL somente leitura antes da ativação.
+
 ## Painel de decisões
 
 [Perguntas, escolhas e orientações do projeto](https://guiga99.github.io/Rota_do_milho/) — painel web estático. As escolhas são confirmadas em issues do GitHub; rascunhos locais não constituem aprovação. Veja [como registrar respostas](docs/DECISOES.md). A aplicação de consultas continua local nesta versão.

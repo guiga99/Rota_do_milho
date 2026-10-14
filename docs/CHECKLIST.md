@@ -112,3 +112,11 @@ Detalhes: [Incremento 4](INCREMENTO_4.md), [roteiro Cloud](STREAMLIT_CLOUD.md), 
 - [ ] Homologar com contas Google reais dos colegas após ativação da aplicação.
 
 Issue #5: Escavador, banco da equipe e teste sem cobrança escolhidos. Acesso privado/banco/OAuth permanecem pendentes. Ver [Revisão de campos](REVISAO_CAMPOS.md).
+
+## Ativação Streamlit
+
+- [x] Preparar roteiro de Create app com repositório, branch, entrypoint e Python definidos.
+- [x] Implementar verificador dos Secrets/callback e teste de PostgreSQL somente leitura sem exibir credenciais.
+- [ ] Responsável criar aplicação na conta Streamlit e informar somente a URL pública.
+- [ ] Configurar OAuth web, usuários e PostgreSQL nos Secrets privados da aplicação.
+- [ ] Executar login, consulta, revisão, download e reinício na implantação real.

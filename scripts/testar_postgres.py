@@ -14,6 +14,7 @@ from sqlalchemy.engine import URL
 import psycopg
 from rota.storage import PostgresStore, StorageError
 from rota.reviews import alvos
+from rota.deployment import testar_banco
 
 IMAGE='postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24'
 
@@ -62,6 +63,7 @@ def main():
                 assert password not in str(e)
             else:raise AssertionError('CA não confiável foi aceita.')
             store=PostgresStore(url('server.crt'))
+            assert testar_banco(url('server.crt'))[0] is True
             payload={'id':'fixture-sintetica','criada':'2026-01-01T00:00:00Z','status':'Concluída',
                      'registros':[{'cnj':'processo-sintetico','grau':1,'original':{'teste':'çã','origem':[None,1]}}],'complementos':[]}
             store.salvar(payload)
