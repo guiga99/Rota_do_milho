@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       bundle_b64:
-        description: ZIP da amostra em base64 (somente dados públicos, sem credenciais)
+        description: ZIP de evidências em base64 (sem XLSX e sem credenciais)
         required: true
         type: string
       sha256:
@@ -16,21 +16,37 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install openpyxl==3.1.5 httpx==0.28.1
       - name: Conferir e preparar arquivos
         env:
           BUNDLE_B64: ${{ inputs.bundle_b64 }}
           EXPECTED_SHA256: ${{ inputs.sha256 }}
         run: |
           python - <<'PY'
-          import base64, hashlib, io, os, pathlib, zipfile
+          import base64, hashlib, io, json, os, pathlib, zipfile
+          from rota.export import exportar
           data = base64.b64decode(os.environ['BUNDLE_B64'], validate=True)
           assert hashlib.sha256(data).hexdigest() == os.environ['EXPECTED_SHA256'], 'Hash divergente'
           path = pathlib.Path('assets'); path.mkdir()
           with zipfile.ZipFile(io.BytesIO(data)) as z:
               assert z.testzip() is None, 'ZIP inválido'
-              path.joinpath('TRF4_amostra20.xlsx').write_bytes(z.read('TRF4_amostra20.xlsx'))
-          path.joinpath('TRF4_amostra20_dados_completos.zip').write_bytes(data)
-          print('Hash e ZIP conferidos; arquivos preparados.')
+              for name in ['TRF4_amostra20.json','inventario_campos.json','MANIFESTO.json','LEIA_ME.txt']:
+                  path.joinpath(name).write_bytes(z.read(name))
+          result = json.loads(path.joinpath('TRF4_amostra20.json').read_text())
+          assert result['cnjs_unicos'] == 20 and all(r['original']['nivelSigilo'] == 0 for r in result['registros'])
+          xlsx = exportar(result)
+          path.joinpath('TRF4_amostra20.xlsx').write_bytes(xlsx)
+          manifesto = json.loads(path.joinpath('MANIFESTO.json').read_text())
+          manifesto['arquivos']['TRF4_amostra20.xlsx'] = {'sha256': hashlib.sha256(xlsx).hexdigest(), 'bytes': len(xlsx)}
+          path.joinpath('MANIFESTO.json').write_text(json.dumps(manifesto,ensure_ascii=False,indent=2))
+          with zipfile.ZipFile(path/'TRF4_amostra20_dados_completos.zip','w',zipfile.ZIP_DEFLATED) as bundle:
+              for name in ['TRF4_amostra20.xlsx','TRF4_amostra20.json','inventario_campos.json','MANIFESTO.json','LEIA_ME.txt']:
+                  bundle.write(path/name,name)
+          print('Evidências verificadas, XLSX reaberto pelo exportador e pacote completo preparado.')
           PY
       - name: Publicar assets na Release
         env:
