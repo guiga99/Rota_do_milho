@@ -41,4 +41,4 @@ No Windows, use `.venv\Scripts\python.exe` em lugar de `.venv/bin/python`. Os te
 
 ## Limitações
 
-Aplicação local para um operador. Ainda sem login, cofre para cadastro persistente de credenciais ou implantação pública. Não expor o servidor na Internet até implementar e validar esses recursos. As regras de trânsito são indícios textuais explicitamente rotulados; a validação jurídica por códigos e o mapeamento dos 103 termos permanecem pendentes.
+Aplicação local para um operador. Login Google implementado com configuração pendente; veja ACESSO_GOOGLE.md. Ainda sem cofre para cadastro persistente de credenciais ou implantação pública. Não expor o servidor na Internet até implementar e validar esses recursos. As regras de trânsito são indícios textuais explicitamente rotulados; a validação jurídica por códigos e o mapeamento dos 103 termos permanecem pendentes.

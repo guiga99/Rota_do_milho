@@ -49,3 +49,32 @@ def inventario(records):
                 for item in value: visit(item, path + '[]')
         visit(record['original'], '')
     return [{**item, 'tipos': ', '.join(sorted(item['tipos'])), 'total_registros': len(records)} for _, item in sorted(stats.items())]
+
+
+CAMPOS_PRINCIPAIS = ['numeroProcesso','classe.nome','assuntos[].nome','dataAjuizamento','grau']
+ROTULOS = {'numeroProcesso':'Número CNJ','classe.nome':'Classe','assuntos[].nome':'Assuntos','dataAjuizamento':'Ajuizamento original','grau':'Grau'}
+
+
+def extrair(source, path):
+    def walk(value, parts):
+        if not parts: return value
+        part=parts[0];array=part.endswith('[]');key=part[:-2] if array else part
+        if not isinstance(value,dict) or key not in value: return None
+        child=value[key]
+        if array:
+            return [walk(item,parts[1:]) for item in child] if isinstance(child,list) else None
+        return walk(child,parts[1:])
+    return walk(source,path.split('.'))
+
+
+def tabela_principal(records, fields):
+    import json
+    rows=[]
+    for record in records:
+        row={}
+        for field in fields:
+            value=extrair(record['original'],field)
+            row[ROTULOS.get(field,field)]=json.dumps(value,ensure_ascii=False) if isinstance(value,(list,dict)) else value
+        row['Qualidade técnica']=record['qualidade']
+        rows.append(row)
+    return rows

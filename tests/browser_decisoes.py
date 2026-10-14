@@ -28,7 +28,7 @@ try:
   context.route('https://github.com/**',lambda r:r.fulfill(body='<p>Formulário externo interceptado no teste</p>',content_type='text/html'))
   page=context.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
   page.goto(url);page.get_by_text('Nenhum registro confirmado ainda.',exact=False).wait_for()
-  assert page.locator('.card').count()==7
+  assert page.locator('.card').count()==8
   assert page.locator('.option[aria-pressed="true"]').count()==0
   assert page.locator('#save').is_disabled()
   page.get_by_role('button',name=re.compile('Refinar seleção jurídica')).click()

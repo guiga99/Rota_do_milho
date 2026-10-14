@@ -1,58 +1,91 @@
-"""MVP local para um operador. Não expor na Internet sem autenticação."""
+"""MVP DataJud com desenvolvimento local ou autenticação Google da equipe."""
 import csv,json,os
 from pathlib import Path
 import streamlit as st
-from rota.core import ASSUNTOS,ConsultaError,DataJud,Store,coletar
+from rota.core import ASSUNTOS,TRIBUNAIS,ConsultaError,DataJud,Store,coletar
 from rota.export import exportar
-from rota.fields import inventario, periodo_cinco_anos
+from rota.fields import inventario, periodo_cinco_anos, CAMPOS_PRINCIPAIS, tabela_principal
+from rota.access import proteger
 
 ROOT=Path(__file__).parent
 st.set_page_config(page_title='Rota do Milho',page_icon='🌽',layout='wide')
 st.title('Rota do Milho')
-st.caption('Pesquisa tributária no TRF4 · metadados públicos do CNJ · revisão jurídica necessária')
+st.caption('Pesquisa tributária no TRF4 · TJSC por número CNJ · revisão jurídica necessária')
+try: settings=st.secrets.to_dict()
+except FileNotFoundError: settings={}
+identity=proteger(st,os.getenv('ROTA_AUTH_MODE',settings.get('access',{}).get('mode','local')),settings)
+if identity['mode']=='google':
+    st.sidebar.caption('Conta autorizada: '+identity['email'])
+    if st.sidebar.button('Sair da conta'):st.session_state.clear();st.logout()
+    st.sidebar.caption('Perfil: administrador' if identity['role']=='admin' else 'Perfil: operador')
+
 store=Store(Path(os.getenv('ROTA_DATA_DIR',str(ROOT/'data/runtime')))/'consultas.sqlite3')
-if 'api_key' not in st.session_state:st.session_state.api_key=os.getenv('DATAJUD_API_KEY','')
+if 'api_key' not in st.session_state:st.session_state.api_key=os.getenv('DATAJUD_API_KEY',settings.get('datajud',{}).get('api_key',''))
 config,pesquisa,resultados,historico=st.tabs(['Configurações','Pesquisa','Resultados','Histórico'])
 with config:
-    st.subheader('Conexão DataJud')
-    st.info('Uso local por um operador. A chave digitada fica somente nesta sessão e será perdida ao encerrá-la. Para inicialização automática, configure DATAJUD_API_KEY no servidor.')
-    with st.form('config'):
-        key=st.text_input('Chave API DataJud',type='password',value=st.session_state.api_key)
-        salvar=st.form_submit_button('Usar chave nesta sessão')
-        if salvar:st.session_state.api_key=key.strip();st.success('Configuração aplicada à sessão.')
-    if st.button('Testar conexão'):
-        api=None
-        try:
-            api=DataJud(st.session_state.api_key)
-            with st.spinner('Consultando CNJ…'):test=api.teste()
-            st.session_state.teste=test
-            st.success(f"HTTP 200 · {test['registros']} registro(s) · {test['data']}")
-            st.write('Campos disponíveis:',test['campos'])
-        except ConsultaError as e:st.error(str(e))
-        finally:
-            if api:api.close()
+    if identity['role']!='admin':
+        st.info('A configuração das integrações é restrita aos administradores da equipe.')
+    else:
+        st.subheader('Conexão DataJud')
+        st.info('A chave digitada fica somente nesta sessão e será perdida ao encerrá-la. Para inicialização automática, configure DATAJUD_API_KEY no servidor.')
+        with st.form('config'):
+            key=st.text_input('Chave API DataJud',type='password',value=st.session_state.api_key)
+            salvar=st.form_submit_button('Usar chave nesta sessão')
+            if salvar:st.session_state.api_key=key.strip();st.success('Configuração aplicada à sessão.')
+        tribunal_teste=st.selectbox('Tribunal para teste de conexão',list(TRIBUNAIS))
+        if st.button('Testar conexão'):
+            api=None
+            try:
+                api=DataJud(st.session_state.api_key,tribunal=tribunal_teste)
+                with st.spinner('Consultando CNJ…'):test=api.teste()
+                st.session_state.teste=test
+                st.success(f"HTTP 200 · {test['registros']} registro(s) · {test['data']}")
+                st.write('Campos disponíveis:',test['campos'])
+            except ConsultaError as e:st.error(str(e))
+            finally:
+                if api:api.close()
 with pesquisa:
-    st.subheader('Consulta ao TRF4')
-    st.warning('Os assuntos abaixo foram observados no piloto. O mapeamento jurídico dos 103 termos ainda está pendente. Não há busca em textos de decisões.')
-    with st.form('pesquisar'):
-        codes=st.multiselect('Assuntos enviados ao CNJ',list(ASSUNTOS),default=[6060,6048,6045],format_func=lambda x:f'{x} — {ASSUNTOS[x]}')
-        usar_periodo=st.checkbox('Filtrar por período de ajuizamento', value=True)
-        inicio_padrao,fim_padrao=periodo_cinco_anos()
-        a,b=st.columns(2)
-        inicio=a.date_input('De',value=inicio_padrao);fim=b.date_input('Até',value=fim_padrao)
-        limite=st.number_input('Limite de processos únicos',min_value=1,max_value=100,value=100)
-        buscar=st.form_submit_button('Consultar CNJ')
-    if buscar:
-        api=None
-        try:
-            api=DataJud(st.session_state.api_key)
-            with st.spinner('Consultando e validando…'):res=coletar(api,store,codes,int(limite),inicio if usar_periodo else None,fim if usar_periodo else None)
-            st.session_state.result=res
-            if res.get('erro'):st.warning(res['erro'])
-            st.success(f"{res['status']} · {res['cnjs_unicos']} CNJs únicos. Abra Resultados.")
-        except ConsultaError as e:st.error(str(e))
-        finally:
-            if api:api.close()
+    tribunal=st.selectbox('Tribunal da consulta',list(TRIBUNAIS))
+    if tribunal=='TJSC':
+        st.info('TJSC é Justiça Estadual. Esta expansão consulta metadados por CNJ e não aplica automaticamente o recorte federal do TRF4. O portal eproc é uma consulta humana separada.')
+        st.link_button('Abrir consulta pública eproc TJSC (1º grau)','https://eprocwebcon.tjsc.jus.br/consulta1g/externo_controlador.php?acao=processo_consulta_publica')
+        with st.form('consulta_numero'):
+            numero=st.text_input('Número CNJ (20 dígitos; pontuação opcional)')
+            buscar_numero=st.form_submit_button('Consultar CNJ no TJSC')
+        if buscar_numero:
+            api=None
+            try:
+                api=DataJud(st.session_state.api_key,tribunal='TJSC')
+                import re
+                with st.spinner('Consultando metadados TJSC…'):res=coletar(api,store,[],limite=1,numero=re.sub(r'[.\-\s]','',numero))
+                res['executada_por']=identity['email'];store.salvar(res);st.session_state.result=res
+                if res.get('erro'):st.warning(res['erro'])
+                else:st.success(f"{res['status']} · {res['cnjs_unicos']} CNJs únicos. Abra Resultados.")
+            except ConsultaError as e:st.error(str(e))
+            finally:
+                if api:api.close()
+    else:
+        st.subheader('Consulta tributária ao TRF4')
+        st.warning('Os assuntos abaixo foram observados no piloto. O mapeamento jurídico dos 103 termos ainda está pendente. Não há busca em textos de decisões.')
+        with st.form('pesquisar'):
+            codes=st.multiselect('Assuntos enviados ao CNJ',list(ASSUNTOS),default=[6060,6048,6045],format_func=lambda x:f'{x} — {ASSUNTOS[x]}')
+            usar_periodo=st.checkbox('Filtrar por período de ajuizamento', value=True)
+            inicio_padrao,fim_padrao=periodo_cinco_anos()
+            a,b=st.columns(2)
+            inicio=a.date_input('De',value=inicio_padrao);fim=b.date_input('Até',value=fim_padrao)
+            limite=st.number_input('Limite de processos únicos',min_value=1,max_value=100,value=100)
+            buscar=st.form_submit_button('Consultar CNJ')
+        if buscar:
+            api=None
+            try:
+                api=DataJud(st.session_state.api_key)
+                with st.spinner('Consultando e validando…'):res=coletar(api,store,codes,int(limite),inicio if usar_periodo else None,fim if usar_periodo else None)
+                res['executada_por']=identity['email'];store.salvar(res);st.session_state.result=res
+                if res.get('erro'):st.warning(res['erro'])
+                else:st.success(f"{res['status']} · {res['cnjs_unicos']} CNJs únicos. Abra Resultados.")
+            except ConsultaError as e:st.error(str(e))
+            finally:
+                if api:api.close()
     with st.expander('103 termos originais — catálogo pendente de mapeamento'):
         with (ROOT/'data/catalogos/termos_originais.csv').open(encoding='utf-8-sig') as f:st.dataframe(list(csv.DictReader(f)),hide_index=True)
 with historico:
@@ -72,7 +105,10 @@ with resultados:
         transito=st.checkbox('Somente indício textual de trânsito — exige revisão')
         qualidade=st.multiselect('Qualidade técnica',['Validado tecnicamente','Com ressalvas','Não exportável'],default=['Validado tecnicamente','Com ressalvas'])
         records=[r for r in res['registros'] if r['qualidade'] in qualidade and (not transito or r['indicio_transito'])]
-        st.dataframe([{k:r[k] for k in ['cnj','grau','classe','assuntos','ajuizamento','qualidade','ressalvas','indicio_transito']} for r in records],hide_index=True,width='stretch')
+        campos_disponiveis=[x['campo'] for x in inventario(res['registros'])]
+        st.caption('Sugestão inicial de tabela enxuta; personalize as colunas. O JSON completo e as abas de dados originais são preservados.')
+        campos=st.multiselect('Campos da tabela principal',campos_disponiveis,default=[f for f in CAMPOS_PRINCIPAIS if f in campos_disponiveis],key='campos_'+res['id'])
+        st.dataframe(tabela_principal(records,campos),hide_index=True,width='stretch')
         with st.expander('Todos os campos disponíveis nesta amostra', expanded=False):
             st.caption('Inventário do JSON original, incluindo campos aninhados. Presença não comprova qualidade jurídica. O Excel inclui CAMPOS_DISPONIVEIS e DADOS_ORIGINAIS sem descartar campos novos.')
             st.dataframe(inventario(records),hide_index=True,width='stretch')
@@ -83,8 +119,8 @@ with resultados:
         selection=st.multiselect('Selecionar CNJs para exportação',cnjs,default=cnjs,key=selection_key)
         if selection:
             try:
-                data=exportar(res,selection)
-                st.download_button('Baixar XLSX verificado',data,file_name=f"TRF4_{res['id'][:8]}.xlsx",mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+                data=exportar(res,selection,campos=campos)
+                st.download_button('Baixar XLSX verificado',data,file_name=f"{res.get('tribunal','TRF4')}_{res['id'][:8]}.xlsx",mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             except ValueError as e:st.error(str(e))
         st.download_button('Baixar evidências JSON',json.dumps(res,ensure_ascii=False,indent=2).encode(),file_name=f"evidencias_{res['id'][:8]}.json",mime='application/json')
         with st.expander('Filtros e rastreabilidade'):st.json({k:res.get(k) for k in ['id','criada','finalizada','query','status','total_api','erro']})

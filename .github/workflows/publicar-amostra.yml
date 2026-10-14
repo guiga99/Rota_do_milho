@@ -2,6 +2,11 @@ name: Publicar amostra verificada
 on:
   workflow_dispatch:
     inputs:
+      release_tag:
+        description: Release já criada para publicar a revisão da amostra
+        required: true
+        default: amostra-trf4-20-v2
+        type: string
       bundle_b64:
         description: ZIP de evidências em base64 (sem XLSX e sem credenciais)
         required: true
@@ -25,10 +30,13 @@ jobs:
         env:
           BUNDLE_B64: ${{ inputs.bundle_b64 }}
           EXPECTED_SHA256: ${{ inputs.sha256 }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
           python - <<'PY'
-          import base64, hashlib, io, json, os, pathlib, zipfile
+          import base64, hashlib, io, json, os, pathlib, zipfile, re
           from rota.export import exportar
+          from rota.fields import CAMPOS_PRINCIPAIS
+          assert re.fullmatch(r'amostra-trf4-20-v[0-9]+', os.environ['RELEASE_TAG']), 'Tag inesperada'
           data = base64.b64decode(os.environ['BUNDLE_B64'], validate=True)
           assert hashlib.sha256(data).hexdigest() == os.environ['EXPECTED_SHA256'], 'Hash divergente'
           path = pathlib.Path('assets'); path.mkdir()
@@ -38,7 +46,7 @@ jobs:
                   path.joinpath(name).write_bytes(z.read(name))
           result = json.loads(path.joinpath('TRF4_amostra20.json').read_text())
           assert result['cnjs_unicos'] == 20 and all(r['original']['nivelSigilo'] == 0 for r in result['registros'])
-          xlsx = exportar(result)
+          xlsx = exportar(result, campos=CAMPOS_PRINCIPAIS)
           path.joinpath('TRF4_amostra20.xlsx').write_bytes(xlsx)
           manifesto = json.loads(path.joinpath('MANIFESTO.json').read_text())
           manifesto['arquivos']['TRF4_amostra20.xlsx'] = {'sha256': hashlib.sha256(xlsx).hexdigest(), 'bytes': len(xlsx)}
@@ -51,4 +59,5 @@ jobs:
       - name: Publicar assets na Release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload amostra-trf4-20-v1 assets/TRF4_amostra20.xlsx assets/TRF4_amostra20_dados_completos.zip --repo "$GITHUB_REPOSITORY"
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: gh release upload "$RELEASE_TAG" assets/TRF4_amostra20.xlsx assets/TRF4_amostra20_dados_completos.zip --repo "$GITHUB_REPOSITORY"

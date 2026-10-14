@@ -37,3 +37,19 @@ class AllFieldsTests(unittest.TestCase):
             self.assertEqual(next(row for row in rows if row[2]=='novo.nulo')[3],'null')
             self.assertIn('novo.texto',[row[0] for row in w['CAMPOS_DISPONIVEIS'].values][1:])
         api.close()
+
+class LeanTableTests(unittest.TestCase):
+    def test_configurable_table_preserves_full_original(self):
+        from rota.fields import extrair,tabela_principal
+        s=source();s['assuntos'].append({'codigo':123,'nome':'Outro'})
+        self.assertEqual(extrair(s,'assuntos[].nome'),['Folha','Outro'])
+        self.assertIsNone(extrair(s,'unknown.field'))
+        api=DataJud('key',httpx.MockTransport(lambda req:httpx.Response(200,json=response([s]))))
+        with tempfile.TemporaryDirectory() as d:
+            r=coletar(api,Store(Path(d)/'db'),[6060],2)
+            w=load_workbook(io.BytesIO(exportar(r,campos=['numeroProcesso','classe.nome'])))
+            self.assertEqual(list(w['TABELA_PRINCIPAL'].values)[0],('Número CNJ','Classe','Qualidade técnica'))
+            self.assertIn('DADOS_ORIGINAIS',w.sheetnames)
+            self.assertIn('assuntos[1].nome',[row[2] for row in list(w['DADOS_ORIGINAIS'].values)[1:]])
+            self.assertEqual(r['registros'][0]['original'],s)
+        api.close()

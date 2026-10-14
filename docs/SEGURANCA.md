@@ -23,3 +23,5 @@ Na hospedagem, usar provedor de identidade mantido e separar autenticação do u
 - Testar isolamento entre sessões antes de habilitar mais de um usuário.
 
 O `.gitignore` é uma barreira auxiliar: revisar o conteúdo preparado para cada commit e executar verificação de segredos. Não incluir credenciais em exemplos, capturas ou fixtures.
+
+O incremento 3 implementa Google OIDC e roles da equipe; leia ACESSO_GOOGLE.md. A habilitação é controlada por configuração protegida, com lista de e-mails. O modo local é de desenvolvimento. Não há homologação real de OAuth ou exposição pública da aplicação Python nesta entrega.

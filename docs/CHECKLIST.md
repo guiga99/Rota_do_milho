@@ -74,3 +74,16 @@ Marcado significa concluído com evidência; os demais itens permanecem pendente
 - [ ] Definir responsável pela revisão jurídica.
 
 Evidências e limitações: [Incremento 2](INCREMENTO_2.md). Download público dos dois assets confirmado com HTTP 200, reabertura do Excel, teste do ZIP e conciliação do manifesto.
+
+## Orientações da issue #3
+
+- [x] Preservar JSON e permitir tabela principal personalizada com exportação própria.
+- [x] Implementar OIDC Google e roles com allowlist exata, sem cadastro aberto.
+- [x] Testar bloqueio sem configuração e ocultação de chave para operador.
+- [x] Avaliar o link eproc e distinguir consulta humana de API.
+- [x] Validar DataJud/TJSC real e habilitar consulta opcional por CNJ.
+- [ ] Escolher hospedagem e configurar cliente OAuth/usuários no servidor.
+- [ ] Executar login Google, callback e logout reais em homologação.
+- [ ] Confirmar integração oficial eproc para dados complementares.
+
+Evidências: [Incremento 3](INCREMENTO_3.md).
