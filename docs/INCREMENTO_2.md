@@ -37,3 +37,5 @@ O painel permite selecionar campos prioritários e registrar essa escolha no Git
 16 testes automatizados aprovados, incluindo período/leap day, inventário de listas e exportação de campos novos/nulos/textos longos. Excel real reaberto com 20 registros, 59 movimentos, 39 campos/caminhos no inventário e 907 valores originais. A abertura no Excel do Windows continua pendente.
 
 O download da amostra pelo navegador Chromium foi realizado a partir da interface Streamlit e reaberto: 20 processos, 39 caminhos e 907 valores originais. O teste do painel também confirmou seleção de campos com registro estruturado, links de download e layout mobile.
+
+A publicação dos assets usa workflow manual com token do próprio GitHub Actions. O pacote é enviado como input, sem commit dos processos, e seu SHA-256 é conferido antes da publicação. Nenhuma credencial DataJud é enviada ao workflow.

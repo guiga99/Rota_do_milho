@@ -1,0 +1,38 @@
+name: Publicar amostra verificada
+on:
+  workflow_dispatch:
+    inputs:
+      bundle_b64:
+        description: ZIP da amostra em base64 (somente dados públicos, sem credenciais)
+        required: true
+        type: string
+      sha256:
+        description: SHA256 do ZIP antes do envio
+        required: true
+        type: string
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Conferir e preparar arquivos
+        env:
+          BUNDLE_B64: ${{ inputs.bundle_b64 }}
+          EXPECTED_SHA256: ${{ inputs.sha256 }}
+        run: |
+          python - <<'PY'
+          import base64, hashlib, io, os, pathlib, zipfile
+          data = base64.b64decode(os.environ['BUNDLE_B64'], validate=True)
+          assert hashlib.sha256(data).hexdigest() == os.environ['EXPECTED_SHA256'], 'Hash divergente'
+          path = pathlib.Path('assets'); path.mkdir()
+          with zipfile.ZipFile(io.BytesIO(data)) as z:
+              assert z.testzip() is None, 'ZIP inválido'
+              path.joinpath('TRF4_amostra20.xlsx').write_bytes(z.read('TRF4_amostra20.xlsx'))
+          path.joinpath('TRF4_amostra20_dados_completos.zip').write_bytes(data)
+          print('Hash e ZIP conferidos; arquivos preparados.')
+          PY
+      - name: Publicar assets na Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload amostra-trf4-20-v1 assets/TRF4_amostra20.xlsx assets/TRF4_amostra20_dados_completos.zip --repo "$GITHUB_REPOSITORY"
