@@ -30,3 +30,9 @@ O painel estático não exige dependências para uso. Para o teste de navegador,
 O registro central usa autenticação e confirmação no GitHub. O painel não escreve diretamente na conta do usuário nem pede token. As opções em localStorage são rascunhos do navegador; somente issues estruturadas publicadas pelo responsável aparecem como registradas.
 
 A publicação no GitHub Pages e a verificação HTTPS são etapas adicionais, documentadas em `DECISOES.md`. Uma verificação de leitura pública não equivale a testar a criação de uma decisão real; essa ação fica com o responsável. Nenhuma preferência foi aprovada pelo assistente.
+
+## Publicação verificada
+
+GitHub Pages: https://guiga99.github.io/Rota_do_milho/ . A API confirmou status `built`, source `gh-pages` e build sem erro. HTML, JavaScript e CSS responderam HTTP 200 e foram comparados byte a byte com os arquivos publicados.
+
+A renderização também foi verificada com o conteúdo HTTPS real e leitura real do histórico público (ainda sem respostas). No ambiente de teste, Chromium não confia diretamente na CA do proxy; os recursos do site e da API foram entregues ao navegador por urllib, que valida TLS usando a cadeia configurada do ambiente. Não foi desabilitada verificação de certificados. A criação de uma resposta real permanece ação do responsável no GitHub.

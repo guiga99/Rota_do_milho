@@ -1,6 +1,6 @@
 # Painel de decisões e orientações
 
-Endereço planejado: https://guiga99.github.io/Rota_do_milho/ . A publicação e a verificação de acesso devem ser confirmadas no relatório da entrega.
+Endereço publicado e verificado: https://guiga99.github.io/Rota_do_milho/ . GitHub Pages com status `built`, origem `gh-pages`, e HTML, JavaScript e CSS respondendo HTTP 200 com conteúdo igual aos arquivos do repositório.
 
 ## Fluxo do responsável
 
@@ -42,4 +42,4 @@ HTML, CSS e JavaScript estáticos em `web/decisoes`, publicados no GitHub Pages 
 
 O repositório e as respostas são públicos. Não registrar credenciais, senhas, documentos individuais de processos ou informações reservadas nesse painel. Autenticação e confidencialidade para a futura aplicação de consultas continuam sendo uma etapa independente.
 
-Para atualizar: publicar o commit em `main`, gerar o histórico da subpasta com `git subtree split --prefix=web/decisoes`, enviar a referência resultante para `gh-pages` e confirmar o site servido. Não criar worktrees; utilizar o checkout existente.
+Para atualizar: publicar o commit em `main`, executar `python scripts/publicar_painel.py` e confirmar o site servido. O script usa `git commit-tree` para enviar somente a árvore estática para `gh-pages`, preservando a história de publicação, sem worktree ou alteração do checkout. Se o conteúdo já for igual, ele não publica novamente. O GitHub Pages já está configurado para essa branch.
