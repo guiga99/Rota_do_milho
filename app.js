@@ -12,6 +12,7 @@ const questions = [
 ];
 let draft = {decisions:{},note:''};
 let records = [], latest = {}, availableStorage = true;
+let syncing = false, lastReturnRefresh = 0;
 const $ = id => document.getElementById(id);
 function node(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;}
 function status(message){$('action-status').textContent=message;}
@@ -50,7 +51,7 @@ $('save').addEventListener('click',()=>{
   const explain=node('p','','Copie o registro completo e cole no corpo da issue do GitHub. Depois confirme em Submit new issue.');
   const text=node('textarea');text.value=issueBody(p);text.readOnly=true;text.rows=10;text.setAttribute('aria-label','Registro completo para copiar');
   const copy=node('button','primary','Copiar registro e abrir GitHub ↗');
-  copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(text.value);window.open(`https://github.com/${REPO}/issues/new?labels=decisoes&title=${encodeURIComponent('[Decisões] Orientações do MVP')}`,'_blank','noopener');status('Registro copiado. Cole no corpo da issue e confirme no GitHub.');dialog.close();dialog.remove();}catch{text.select();status('Selecione e copie o registro exibido. Abra uma nova issue com o rótulo decisoes.');}});
+  copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(text.value);window.open(`https://github.com/${REPO}/issues/new?labels=decisoes&title=${encodeURIComponent('[Decisões] Orientações do MVP')}`,'_blank','noopener');status('Registro copiado. Cole no corpo da issue e confirme no GitHub.');dialog.close();dialog.remove();}catch{text.select();status('Selecione e copie o registro exibido. Abra uma nova issue e cole o registro no corpo.');}});
   const close=node('button','secondary','Voltar');close.addEventListener('click',()=>{dialog.close();dialog.remove();});dialog.append(h,explain,text,copy,close);document.body.append(dialog);dialog.showModal();return;
  }
  window.open(url,'_blank','noopener');status('Formulário aberto. Confirme em “Submit new issue” no GitHub. Suas escolhas ainda são rascunho até o registro aparecer no histórico.');
@@ -68,11 +69,13 @@ function parseRecord(issue){
 }
 function renderHistory(){const el=$('history');el.replaceChildren();for(const r of records){const box=node('article','history-item');const a=node('a','','Registro #'+r.issue+' · '+new Date(r.date).toLocaleString('pt-BR'));a.href=r.url;a.target='_blank';a.rel='noopener';box.append(a);for(const d of r.decisions){const q=questions.find(q=>q.id===d.id);box.append(node('p','',q.title+' '+(q.options.find(o=>o[0]===d.option)?.[1]||'Orientação sem opção')+(d.note?' — '+d.note:'')));}if(r.guidance)box.append(node('p','','Orientação geral: '+r.guidance));el.append(box);}}
 async function sync(){
+ if(syncing)return;
+ syncing=true;lastReturnRefresh=Date.now();
  $('refresh').disabled=true;$('sync-status').textContent='Consultando o histórico público no GitHub…';
  try{
   let issues=[],truncated=false;
   for(let page=1;page<=4;page++){
-   const res=await fetch(`https://api.github.com/repos/${REPO}/issues?labels=decisoes&state=all&sort=created&direction=desc&per_page=100&page=${page}`,{headers:{Accept:'application/vnd.github+json'}});
+   const res=await fetch(`https://api.github.com/repos/${REPO}/issues?state=all&sort=created&direction=desc&per_page=100&page=${page}&_=${Date.now()}`,{cache:'no-store',headers:{Accept:'application/vnd.github+json'}});
    if(!res.ok)throw new Error(res.status===403||res.status===429?'Limite de consultas ao GitHub. Tente novamente mais tarde.':'Histórico temporariamente indisponível. HTTP '+res.status+'.');
    const part=await res.json();if(!Array.isArray(part))throw new Error('Resposta inesperada do histórico.');issues.push(...part);if(part.length<100)break;if(page===4)truncated=true;
   }
@@ -82,9 +85,15 @@ async function sync(){
   for(const q of questions){const d=draft.decisions[q.id],r=latest[q.id];if(d&&r&&d.option===r.option&&d.note.trim()===r.note.trim())delete draft.decisions[q.id];}
   if(draft.note.trim()&&records.some(r=>r.guidance.trim()===draft.note.trim())){draft.note='';$('general-note').value='';}
   saveLocal();render();renderHistory();
+  if(records.length&&!differences().length&&!draft.note.trim())status('Suas respostas foram reconhecidas no GitHub. Não é necessário enviá-las novamente.');
   $('sync-status').textContent=(records.length?records.length+' registro(s) confirmado(s) pela conta '+OWNER+'.':'Nenhum registro confirmado ainda. Faça suas escolhas acima.')+' Última atualização: '+new Date().toLocaleTimeString('pt-BR')+(truncated?' · Limite de leitura atingido; registros anteriores podem não estar exibidos.':'');
  }catch(e){$('sync-status').textContent=e.message+' Seus rascunhos foram preservados. Use o link do GitHub para consultar os registros.';}
- finally{$('refresh').disabled=false;}
+ finally{syncing=false;$('refresh').disabled=false;}
 }
 $('refresh').addEventListener('click',sync);
+function syncOnReturn(){
+ if(document.visibilityState==='visible'&&Date.now()-lastReturnRefresh>2500)sync();
+}
+window.addEventListener('focus',syncOnReturn);
+document.addEventListener('visibilitychange',syncOnReturn);
 render();sync();
