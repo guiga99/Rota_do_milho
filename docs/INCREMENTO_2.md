@@ -39,3 +39,5 @@ O painel permite selecionar campos prioritários e registrar essa escolha no Git
 O download da amostra pelo navegador Chromium foi realizado a partir da interface Streamlit e reaberto: 20 processos, 39 caminhos e 907 valores originais. O teste do painel também confirmou seleção de campos com registro estruturado, links de download e layout mobile.
 
 A publicação dos assets usa workflow manual com token do próprio GitHub Actions. O pacote é enviado como input, sem commit dos processos, e seu SHA-256 é conferido antes da publicação. Nenhuma credencial DataJud é enviada ao workflow.
+
+Publicação concluída pelo [workflow](https://github.com/guiga99/Rota_do_milho/actions/runs/38497071439), com status success. Excel e ZIP públicos responderam HTTP 200, foram baixados novamente, reabertos e conciliados com o manifesto SHA-256. O JSON original é idêntico à consulta coletada. O painel público preserva as cinco escolhas existentes e apresenta duas novas decisões (campos prioritários e login da equipe).

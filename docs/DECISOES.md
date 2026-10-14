@@ -43,3 +43,7 @@ HTML, CSS e JavaScript estáticos em `web/decisoes`, publicados no GitHub Pages 
 O repositório e as respostas são públicos. Não registrar credenciais, senhas, documentos individuais de processos ou informações reservadas nesse painel. Autenticação e confidencialidade para a futura aplicação de consultas continuam sendo uma etapa independente.
 
 Para atualizar: publicar o commit em `main`, executar `python scripts/publicar_painel.py` e confirmar o site servido. O script usa `git commit-tree` para enviar somente a árvore estática para `gh-pages`, preservando a história de publicação, sem worktree ou alteração do checkout. Se o conteúdo já for igual, ele não publica novamente. O GitHub Pages já está configurado para essa branch.
+
+## Amostra e novos campos
+
+A seção Amostra oferece o Excel de 20 processos e ZIP com evidências. O inventário no site é agregado, sem dados individuais de processos. Marque os campos e clique **Usar esta seleção como rascunho**, depois **Registrar no GitHub**. A seleção fica no registro estruturado da pergunta `campos_prioritarios`, incluindo os caminhos originais. A pergunta `login_equipe` documenta o provedor preferido para a futura hospedagem. Nenhuma dessas duas decisões foi inferida a partir das respostas anteriores.

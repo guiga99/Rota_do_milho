@@ -73,4 +73,4 @@ Marcado significa concluído com evidência; os demais itens permanecem pendente
 - [ ] Definir provedor de login e implantar acesso protegido para a equipe.
 - [ ] Definir responsável pela revisão jurídica.
 
-Evidências e limitações: [Incremento 2](INCREMENTO_2.md). Download público dos assets deve ser confirmado antes da entrega ao usuário.
+Evidências e limitações: [Incremento 2](INCREMENTO_2.md). Download público dos dois assets confirmado com HTTP 200, reabertura do Excel, teste do ZIP e conciliação do manifesto.
