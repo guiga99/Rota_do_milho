@@ -47,3 +47,7 @@ Para atualizar: publicar o commit em `main`, executar `python scripts/publicar_p
 ## Amostra e novos campos
 
 A seção Amostra oferece o Excel de 20 processos e ZIP com evidências. O inventário no site é agregado, sem dados individuais de processos. Marque os campos e clique **Usar esta seleção como rascunho**, depois **Registrar no GitHub**. A seleção fica no registro estruturado da pergunta `campos_prioritarios`, incluindo os caminhos originais. A pergunta `login_equipe` documenta o provedor preferido para a futura hospedagem. Nenhuma dessas duas decisões foi inferida a partir das respostas anteriores.
+
+## Registro da issue #3
+
+A escolha Google e a preferência por tabela enxuta foram implementadas no código. A orientação geral sobre TJSC/eproc foi avaliada e está em TJSC_EPROC.md. A nova pergunta `hospedagem` documenta o próximo requisito para o callback OAuth e a persistência; não enviar segredos ou lista de e-mails no registro público.

@@ -40,3 +40,5 @@ Fontes oficiais consultadas com HTTP 200 em 14/10/2026:
 
 - [Streamlit st.login](https://docs.streamlit.io/develop/api-reference/user/st.login)
 - [Autenticação OIDC no Streamlit](https://docs.streamlit.io/develop/concepts/connections/authentication)
+
+A descoberta OIDC oficial do Google respondeu HTTP 200 neste ambiente, com issuer esperado. Credenciais, callback e login/logout reais continuam não homologados.

@@ -24,3 +24,7 @@ Nenhum cadastro OAuth, integração comercial ou implantação pública da aplic
 O download da tabela enxuta foi conferido no Chromium: 20 processos, seis colunas de sugestão inicial e 907 valores originais preservados no mesmo XLSX. A primeira consulta TJSC ordenada excedeu o timeout; a consulta exata por CNJ foi simplificada para não ordenar desnecessariamente e passou na validação real.
 
 A [versão 2 do Excel](https://github.com/guiga99/Rota_do_milho/releases/download/amostra-trf4-20-v2/TRF4_amostra20.xlsx) reaproveita a amostra real anterior, acrescentando TABELA_PRINCIPAL. Não é uma nova coleta de 20 processos nem uma seleção de campos já aprovada pelo responsável. A versão anterior permanece disponível.
+
+Publicação da versão 2 concluída pelo [workflow](https://github.com/guiga99/Rota_do_milho/actions/runs/38559155977). Excel e ZIP responderam HTTP 200; TABELA_PRINCIPAL possui 20 linhas de dados e seis colunas, DADOS_ORIGINAIS conserva 907 valores, e o JSON é idêntico à amostra original. [Suíte no GitHub](https://github.com/guiga99/Rota_do_milho/actions/runs/38559155448) também concluída com success.
+
+Metadados de descoberta OIDC do Google acessíveis com HTTP 200 e emissor esperado; isso não valida o login sem cliente OAuth. O campo de hospedagem no painel está pendente de resposta e a aplicação Python permanece sem implantação pública.
