@@ -18,8 +18,13 @@ try:
  with sync_playwright() as p:
   browser=p.chromium.launch(executable_path=shutil.which('chromium'),headless=True,args=['--no-sandbox'])
   context=browser.new_context(viewport={'width':1440,'height':1000})
-  remote=[]
-  context.route('https://api.github.com/repos/guiga99/Rota_do_milho/issues?**',lambda r:r.fulfill(json=remote))
+  remote=[];requests=[]
+  def history(route):
+   query=parse_qs(urlparse(route.request.url).query);requests.append(query)
+   # Reproduz o filtro do GitHub: uma issue sem rótulo não aparece com labels.
+   data=[i for i in remote if query['labels'][0] in i.get('labels',[])] if 'labels' in query else remote
+   route.fulfill(json=data)
+  context.route('https://api.github.com/repos/guiga99/Rota_do_milho/issues?**',history)
   context.route('https://github.com/**',lambda r:r.fulfill(body='<p>Formulário externo interceptado no teste</p>',content_type='text/html'))
   page=context.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
   page.goto(url);page.get_by_text('Nenhum registro confirmado ainda.',exact=False).wait_for()
@@ -41,14 +46,18 @@ try:
   assert payload['decisions'][0]['option']=='selecao_juridica'
   assert page.locator('#count-saved').inner_text()=='0'
   results.append('Formulário GitHub com registro estruturado; abrir formulário não confirma resposta')
-  issue={'number':10,'user':{'login':'guiga99'},'body':body,'created_at':'2026-10-14T00:00:00Z','html_url':'https://github.com/guiga99/Rota_do_milho/issues/10'}
+  issue={'number':10,'labels':[],'user':{'login':'guiga99'},'body':body,'created_at':'2026-10-14T00:00:00Z','html_url':'https://github.com/guiga99/Rota_do_milho/issues/10'}
   forged={**issue,'number':11,'user':{'login':'terceiro'}}
-  remote.extend([forged,issue]);page.locator('#refresh').click()
+  remote.extend([forged,issue])
+  page.wait_for_function('Date.now()-lastReturnRefresh>2500')
+  page.evaluate("window.dispatchEvent(new Event('focus'))")
   page.get_by_text('1 registro(s) confirmado(s)',exact=False).wait_for()
   assert page.locator('#count-saved').inner_text()=='1'
   assert page.locator('#count-draft').inner_text()=='0'
   assert page.locator('.history-item').count()==1
-  results.append('Histórico reconhece proprietário, ignora terceiros e reconcilia rascunhos')
+  assert all('labels' not in q for q in requests)
+  assert all('_' in q for q in requests)
+  results.append('Ao voltar à aba, reconhece issue sem rótulo, ignora terceiros e reconcilia rascunhos')
   page.locator('#note-proxima_entrega').fill('<img src=x onerror=alert(1)>')
   page.locator('#refresh').click();page.get_by_text('1 registro(s) confirmado(s)',exact=False).wait_for()
   assert page.locator('article.card img').count()==0

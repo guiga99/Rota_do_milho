@@ -36,3 +36,11 @@ A publicação no GitHub Pages e a verificação HTTPS são etapas adicionais, d
 GitHub Pages: https://guiga99.github.io/Rota_do_milho/ . A API confirmou status `built`, source `gh-pages` e build sem erro. HTML, JavaScript e CSS responderam HTTP 200 e foram comparados byte a byte com os arquivos publicados.
 
 A renderização também foi verificada com o conteúdo HTTPS real e leitura real do histórico público (ainda sem respostas). No ambiente de teste, Chromium não confia diretamente na CA do proxy; os recursos do site e da API foram entregues ao navegador por urllib, que valida TLS usando a cadeia configurada do ambiente. Não foi desabilitada verificação de certificados. A criação de uma resposta real permanece ação do responsável no GitHub.
+
+## Correção de sincronização
+
+As issues reais #1 e #2 foram criadas pela conta responsável com registros completos, porém sem rótulo. O filtro obrigatório `labels=decisoes` fazia o painel retornar uma lista vazia. A sincronização agora consulta as issues do repositório e aceita registros pela conta autora, marcador, schema, projeto e IDs, independentemente de rótulo.
+
+Ao retornar à aba, eventos de foco/visibilidade atualizam o histórico. Requisições concorrentes são evitadas e a leitura usa um identificador de atualização e `no-store` para reduzir respostas em cache. O JavaScript publicado ganhou uma versão no endereço do recurso para atualizar navegadores que carregaram o código anterior.
+
+O teste de regressão reproduz a ausência do rótulo e simula retorno à aba; confirma reconciliação de rascunhos, preservação das notas e rejeição de registros de terceiros. Também foi testada a leitura HTTPS das issues reais: dois registros, cinco respostas confirmadas, nenhuma pergunta sem resposta, nenhum rascunho, referências ao registro mais recente #2 e orientações preservadas. Não foram criadas nem modificadas issues para realizar o teste.
