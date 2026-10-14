@@ -28,7 +28,7 @@ try:
   context.route('https://github.com/**',lambda r:r.fulfill(body='<p>Formulário externo interceptado no teste</p>',content_type='text/html'))
   page=context.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
   page.goto(url);page.get_by_text('Nenhum registro confirmado ainda.',exact=False).wait_for()
-  assert page.locator('.card').count()==5
+  assert page.locator('.card').count()==7
   assert page.locator('.option[aria-pressed="true"]').count()==0
   assert page.locator('#save').is_disabled()
   page.get_by_role('button',name=re.compile('Refinar seleção jurídica')).click()
@@ -62,6 +62,18 @@ try:
   page.locator('#refresh').click();page.get_by_text('1 registro(s) confirmado(s)',exact=False).wait_for()
   assert page.locator('article.card img').count()==0
   results.append('Conteúdo externo é apresentado como texto, sem HTML executável')
+  page.get_by_text('Selecionar campos prioritários no inventário',exact=True).click()
+  page.locator('#field-list input').first.wait_for()
+  assert page.locator('#field-list input').count()==39
+  page.locator('#field-list input[value="numeroProcesso"]').check()
+  page.locator('#field-list input[value="movimentos[].nome"]').check()
+  page.locator('#apply-fields').click()
+  data=page.evaluate('payload()')
+  chosen=next(d for d in data['decisions'] if d['id']=='campos_prioritarios')
+  assert json.loads(chosen['note'])['campos_prioritarios']==['movimentos[].nome','numeroProcesso']
+  assert chosen['option']=='personalizado'
+  assert 'releases/download/amostra-trf4-20-v1' in page.get_by_role('link',name='Baixar Excel dos 20 processos').get_attribute('href')
+  results.append('Inventário de 39 campos, escolha rastreável e links da amostra de 20 processos')
   page.set_viewport_size({'width':390,'height':844})
   assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth')
   results.append('Layout mobile sem rolagem horizontal')

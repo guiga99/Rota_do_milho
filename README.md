@@ -10,6 +10,8 @@ Para iniciar, siga [Executar no Windows ou Linux](docs/EXECUTAR.md). No Windows 
 
 [Perguntas, escolhas e orientações do projeto](https://guiga99.github.io/Rota_do_milho/) — painel web estático. As escolhas são confirmadas em issues do GitHub; rascunhos locais não constituem aprovação. Veja [como registrar respostas](docs/DECISOES.md). A aplicação de consultas continua local nesta versão.
 
+[Amostra real de 20 processos e relatório do incremento](docs/INCREMENTO_2.md). O painel permite baixar o Excel e escolher campos prioritários. O período padrão do aplicativo passou a ser os últimos cinco anos.
+
 ## Documentação
 
 - [Checklist inicial e entregas](docs/CHECKLIST.md)

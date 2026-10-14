@@ -4,6 +4,7 @@ from pathlib import Path
 import streamlit as st
 from rota.core import ASSUNTOS,ConsultaError,DataJud,Store,coletar
 from rota.export import exportar
+from rota.fields import inventario, periodo_cinco_anos
 
 ROOT=Path(__file__).parent
 st.set_page_config(page_title='Rota do Milho',page_icon='🌽',layout='wide')
@@ -35,9 +36,10 @@ with pesquisa:
     st.warning('Os assuntos abaixo foram observados no piloto. O mapeamento jurídico dos 103 termos ainda está pendente. Não há busca em textos de decisões.')
     with st.form('pesquisar'):
         codes=st.multiselect('Assuntos enviados ao CNJ',list(ASSUNTOS),default=[6060,6048,6045],format_func=lambda x:f'{x} — {ASSUNTOS[x]}')
-        usar_periodo=st.checkbox('Filtrar por período de ajuizamento')
+        usar_periodo=st.checkbox('Filtrar por período de ajuizamento', value=True)
+        inicio_padrao,fim_padrao=periodo_cinco_anos()
         a,b=st.columns(2)
-        inicio=a.date_input('De');fim=b.date_input('Até')
+        inicio=a.date_input('De',value=inicio_padrao);fim=b.date_input('Até',value=fim_padrao)
         limite=st.number_input('Limite de processos únicos',min_value=1,max_value=100,value=100)
         buscar=st.form_submit_button('Consultar CNJ')
     if buscar:
@@ -71,6 +73,9 @@ with resultados:
         qualidade=st.multiselect('Qualidade técnica',['Validado tecnicamente','Com ressalvas','Não exportável'],default=['Validado tecnicamente','Com ressalvas'])
         records=[r for r in res['registros'] if r['qualidade'] in qualidade and (not transito or r['indicio_transito'])]
         st.dataframe([{k:r[k] for k in ['cnj','grau','classe','assuntos','ajuizamento','qualidade','ressalvas','indicio_transito']} for r in records],hide_index=True,width='stretch')
+        with st.expander('Todos os campos disponíveis nesta amostra', expanded=False):
+            st.caption('Inventário do JSON original, incluindo campos aninhados. Presença não comprova qualidade jurídica. O Excel inclui CAMPOS_DISPONIVEIS e DADOS_ORIGINAIS sem descartar campos novos.')
+            st.dataframe(inventario(records),hide_index=True,width='stretch')
         cnjs=list(dict.fromkeys(r['cnj'] for r in records if r['qualidade']!='Não exportável'))
         selection_key='selecao_'+res['id']
         if selection_key in st.session_state:

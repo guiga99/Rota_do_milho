@@ -1,0 +1,384 @@
+{
+  "consulta_id": "90688a9f-8fb7-4189-bc3f-c2f8d4d2261c",
+  "coleta_utc": "2026-10-14T01:27:33.634432+00:00",
+  "periodo": {
+    "de": "2021-10-13",
+    "ate": "2026-10-13"
+  },
+  "processos": 20,
+  "registros": 20,
+  "movimentos": 59,
+  "status": "Limite de amostra atingido",
+  "campos": [
+    {
+      "campo": "@timestamp",
+      "tipos": "string",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "assuntos",
+      "tipos": "array",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "assuntos[]",
+      "tipos": "object",
+      "registros_presentes": 20,
+      "ocorrencias": 52,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "assuntos[].codigo",
+      "tipos": "integer",
+      "registros_presentes": 20,
+      "ocorrencias": 52,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "assuntos[].nome",
+      "tipos": "string",
+      "registros_presentes": 20,
+      "ocorrencias": 52,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "classe",
+      "tipos": "object",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "classe.codigo",
+      "tipos": "integer",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "classe.nome",
+      "tipos": "string",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "dataAjuizamento",
+      "tipos": "string",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "dataHoraUltimaAtualizacao",
+      "tipos": "string",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "formato",
+      "tipos": "object",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "formato.codigo",
+      "tipos": "integer",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "formato.nome",
+      "tipos": "string",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "grau",
+      "tipos": "string",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "id",
+      "tipos": "string",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "movimentos",
+      "tipos": "array",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "movimentos[]",
+      "tipos": "object",
+      "registros_presentes": 20,
+      "ocorrencias": 59,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "movimentos[].codigo",
+      "tipos": "integer",
+      "registros_presentes": 20,
+      "ocorrencias": 59,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "movimentos[].complementosTabelados",
+      "tipos": "array",
+      "registros_presentes": 20,
+      "ocorrencias": 38,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "movimentos[].complementosTabelados[]",
+      "tipos": "object",
+      "registros_presentes": 20,
+      "ocorrencias": 42,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "movimentos[].complementosTabelados[].codigo",
+      "tipos": "integer",
+      "registros_presentes": 20,
+      "ocorrencias": 42,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "movimentos[].complementosTabelados[].descricao",
+      "tipos": "string",
+      "registros_presentes": 20,
+      "ocorrencias": 42,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "movimentos[].complementosTabelados[].nome",
+      "tipos": "string",
+      "registros_presentes": 20,
+      "ocorrencias": 42,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "movimentos[].complementosTabelados[].valor",
+      "tipos": "integer",
+      "registros_presentes": 20,
+      "ocorrencias": 42,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "movimentos[].dataHora",
+      "tipos": "string",
+      "registros_presentes": 20,
+      "ocorrencias": 59,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "movimentos[].nome",
+      "tipos": "string",
+      "registros_presentes": 20,
+      "ocorrencias": 59,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "movimentos[].orgaoJulgador",
+      "tipos": "object",
+      "registros_presentes": 20,
+      "ocorrencias": 59,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "movimentos[].orgaoJulgador.codigo",
+      "tipos": "string",
+      "registros_presentes": 20,
+      "ocorrencias": 59,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "movimentos[].orgaoJulgador.nome",
+      "tipos": "string",
+      "registros_presentes": 20,
+      "ocorrencias": 59,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "nivelSigilo",
+      "tipos": "integer",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "numeroProcesso",
+      "tipos": "string",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "orgaoJulgador",
+      "tipos": "object",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "orgaoJulgador.codigo",
+      "tipos": "integer",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "orgaoJulgador.codigoMunicipioIBGE",
+      "tipos": "integer",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "orgaoJulgador.nome",
+      "tipos": "string",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "sistema",
+      "tipos": "object",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "sistema.codigo",
+      "tipos": "integer",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "sistema.nome",
+      "tipos": "string",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    },
+    {
+      "campo": "tribunal",
+      "tipos": "string",
+      "registros_presentes": 20,
+      "ocorrencias": 20,
+      "nulos": 0,
+      "total_registros": 20
+    }
+  ],
+  "dados_ausentes": [
+    "Empresa contribuinte",
+    "CNPJ",
+    "Advogado/OAB",
+    "Polo passivo",
+    "Valor da causa",
+    "Teor e resultado da decisão"
+  ],
+  "consulta": {
+    "size": 20,
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "terms": {
+              "assuntos.codigo": [
+                6060,
+                6048,
+                6045,
+                6062,
+                6068,
+                6037,
+                6041,
+                6038
+              ]
+            }
+          },
+          {
+            "range": {
+              "dataAjuizamento": {
+                "gte": "20211013000000",
+                "lte": "20261013235959"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "sort": [
+      {
+        "dataAjuizamento": "desc"
+      },
+      {
+        "id.keyword": "asc"
+      }
+    ]
+  },
+  "revisao_juridica": "Pendente",
+  "arquivos": {
+    "TRF4_amostra20.xlsx": {
+      "sha256": "bccfe7f50ede76d9bf2073744bc2c58e36c01a7792b765e7b899ba6b9a223b2f",
+      "bytes": 47331
+    },
+    "TRF4_amostra20.json": {
+      "sha256": "f469a4880bd879adb080e366be508d0f510779a4e4a6e16d2bb9fc6866172b71",
+      "bytes": 158874
+    }
+  }
+}

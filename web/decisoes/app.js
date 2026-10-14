@@ -8,7 +8,9 @@ const questions = [
  {id:'periodo_padrao',title:'Qual período sugerir nas pesquisas?',description:'Processos antigos podem ser relevantes para trânsito em julgado. Um período restrito pode excluí-los.',suggestion:'Manter sem restrição de período como padrão, permitindo informar datas em cada pesquisa.',options:[['sem_restricao','Sem restrição de período','A consulta continua limitada a até 100 candidatos.'],['dez_anos','Últimos 10 anos','Sugestão inicial editável a cada consulta.'],['cinco_anos','Últimos 5 anos','Uma janela menor, também editável.']]},
  {id:'dados_complementares',title:'Como tratar os dados que o DataJud não fornece?',description:'Empresa, advogado, valor e teor da decisão não vieram na amostra do piloto.',suggestion:'Começar com revisão manual e fonte registrada, sem contratação automática de serviços.',options:[['manual','Revisão manual','Permitir complementar os dados com fonte e data.'],['avaliar_fontes','Avaliar outras fontes','Pesquisar alternativas; serviços pagos exigem nova decisão.'],['metadados','Só metadados por enquanto','Manter esses campos pendentes no primeiro ciclo.']]},
  {id:'acesso_aplicacao',title:'Quem deverá acessar a aplicação hospedada?',description:'Esta escolha orienta login, permissões e separação dos dados quando o MVP for hospedado.',suggestion:'Começar apenas com sua conta simplifica a primeira implantação protegida.',options:[['individual','Somente minha conta','Um operador e administração das integrações.'],['equipe','Minha equipe','Planejar convites e permissões; informar detalhes abaixo.'],['definir_depois','Definir depois','Prosseguir com o uso local enquanto decidimos.']]},
- {id:'revisao_juridica',title:'Quem revisará a pertinência dos resultados?',description:'A validação técnica não confirma decisão favorável nem crédito recuperável. Uma amostra precisa de revisão jurídica.',suggestion:'Definir o responsável pela revisão antes de aprovar as regras de seleção.',options:[['usuario','Eu farei a revisão','Você recebe uma amostra com evidências e ressalvas.'],['especialista','Um advogado da equipe','Identificar o papel ou a pessoa nas orientações, se desejar.'],['pendente','Ainda preciso definir','Manter resultados como candidatos sem aprovação jurídica.']]}
+ {id:'revisao_juridica',title:'Quem revisará a pertinência dos resultados?',description:'A validação técnica não confirma decisão favorável nem crédito recuperável. Uma amostra precisa de revisão jurídica.',suggestion:'Definir o responsável pela revisão antes de aprovar as regras de seleção.',options:[['usuario','Eu farei a revisão','Você recebe uma amostra com evidências e ressalvas.'],['especialista','Um advogado da equipe','Identificar o papel ou a pessoa nas orientações, se desejar.'],['pendente','Ainda preciso definir','Manter resultados como candidatos sem aprovação jurídica.']]},
+ {id:'campos_prioritarios',title:'Quais campos devem ganhar destaque?',description:'Inspecione a amostra de 20 processos acima. O inventário mostra tudo que veio na resposta; aqui você define o destaque da interface.',suggestion:'Preservar o JSON completo e escolher uma tabela principal mais enxuta.',options:[['todos','Todos os campos','Exibir todos os campos disponíveis nesta amostra.'],['personalizado','Vou selecionar campos','Use o inventário e o botão Usar esta seleção.'],['definir_depois','Vou revisar a amostra','Manter a definição pendente até conferir o Excel.']]},
+ {id:'login_equipe',title:'Como sua equipe deve entrar na aplicação?',description:'Você escolheu acesso para a equipe. A aplicação de consultas ainda é local; precisamos definir o login antes de hospedá-la.',suggestion:'Usar o provedor que a equipe já utiliza. Credenciais e configuração serão feitas em área protegida, não neste painel.',options:[['google','Contas Google','Planejar login com Google e lista de usuários autorizados.'],['microsoft','Contas Microsoft','Planejar login corporativo Microsoft e permissões.'],['definir_depois','Preciso definir','Registrar abaixo outra preferência ou contexto da equipe.']]}
 ];
 let draft = {decisions:{},note:''};
 let records = [], latest = {}, availableStorage = true;
@@ -84,7 +86,7 @@ async function sync(){
   // Apenas o responsável proprietário pode confirmar decisões; terceiros não alteram o painel.
   for(const q of questions){const d=draft.decisions[q.id],r=latest[q.id];if(d&&r&&d.option===r.option&&d.note.trim()===r.note.trim())delete draft.decisions[q.id];}
   if(draft.note.trim()&&records.some(r=>r.guidance.trim()===draft.note.trim())){draft.note='';$('general-note').value='';}
-  saveLocal();render();renderHistory();
+  saveLocal();render();renderHistory();renderFields();
   if(records.length&&!differences().length&&!draft.note.trim())status('Suas respostas foram reconhecidas no GitHub. Não é necessário enviá-las novamente.');
   $('sync-status').textContent=(records.length?records.length+' registro(s) confirmado(s) pela conta '+OWNER+'.':'Nenhum registro confirmado ainda. Faça suas escolhas acima.')+' Última atualização: '+new Date().toLocaleTimeString('pt-BR')+(truncated?' · Limite de leitura atingido; registros anteriores podem não estar exibidos.':'');
  }catch(e){$('sync-status').textContent=e.message+' Seus rascunhos foram preservados. Use o link do GitHub para consultar os registros.';}
@@ -97,3 +99,20 @@ function syncOnReturn(){
 window.addEventListener('focus',syncOnReturn);
 document.addEventListener('visibilitychange',syncOnReturn);
 render();sync();
+
+
+let sampleFields = [];
+function renderFields(){
+ const list=$('field-list');if(!list)return;list.replaceChildren();
+ let chosen=[];try{chosen=JSON.parse(selected(questions.find(q=>q.id==='campos_prioritarios')).note||'{}').campos_prioritarios||[];}catch{}
+ for(const field of sampleFields){const label=node('label','field-row');const box=node('input');box.type='checkbox';box.value=field.campo;box.checked=chosen.includes(field.campo);label.append(box,node('span','',field.campo+' · '+field.tipos+' · '+field.registros_presentes+'/'+field.total_registros+' registros'));list.append(label);}
+}
+async function loadSample(){
+ try{const r=await fetch('amostra-campos.json',{cache:'no-store'});if(!r.ok)throw new Error('Inventário indisponível.');const data=await r.json();sampleFields=data.campos;
+ $('sample-status').textContent=data.processos+' CNJs únicos · '+data.movimentos+' movimentações · '+sampleFields.length+' caminhos de campos · período '+data.periodo.de+' a '+data.periodo.ate+'.';renderFields();
+ }catch(e){$('sample-status').textContent=e.message+' Os arquivos completos continuam nos links de download.';}
+}
+$('mark-fields').addEventListener('click',()=>document.querySelectorAll('#field-list input').forEach(x=>x.checked=true));
+$('clear-fields').addEventListener('click',()=>document.querySelectorAll('#field-list input').forEach(x=>x.checked=false));
+$('apply-fields').addEventListener('click',()=>{const campos=[...document.querySelectorAll('#field-list input:checked')].map(x=>x.value);if(!campos.length){status('Selecione ao menos um campo no inventário.');return;}draft.decisions.campos_prioritarios={option:'personalizado',note:JSON.stringify({campos_prioritarios:campos},null,2)};saveLocal();render();status('Seleção de campos guardada como rascunho. Use Registrar no GitHub para confirmar.');});
+loadSample();

@@ -8,6 +8,11 @@ class InterfaceTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d,patch.dict(os.environ,{'ROTA_DATA_DIR':d,'DATAJUD_API_KEY':''}):
             app=AppTest.from_file(str(Path(__file__).parents[1]/'app.py')).run()
             self.assertEqual(len(app.exception),0)
+            from rota.fields import periodo_cinco_anos
+            inicio,fim=periodo_cinco_anos()
+            self.assertTrue(app.checkbox[0].value)
+            self.assertEqual(app.date_input[0].value,inicio)
+            self.assertEqual(app.date_input[1].value,fim)
             self.assertEqual([t.label for t in app.tabs],['Configurações','Pesquisa','Resultados','Histórico'])
             app.button[1].click().run()
             self.assertIn('Configure a chave',app.error[0].value)

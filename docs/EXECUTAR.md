@@ -7,7 +7,7 @@
 3. Execute `iniciar_windows.bat` na pasta extraída. O script prepara o ambiente, instala as dependências e inicia a interface na conexão local.
 4. Abra o endereço local exibido pelo Streamlit no navegador do computador.
 5. Em **Configurações**, informe a chave DataJud e clique **Usar chave nesta sessão**, depois **Testar conexão**.
-6. Em **Pesquisa**, selecione assuntos e limite; clique **Consultar CNJ**.
+6. Em **Pesquisa**, selecione assuntos e limite (período padrão: últimos cinco anos, editável); clique **Consultar CNJ**.
 7. Em **Resultados**, revise a qualidade, selecione CNJs e clique **Baixar XLSX verificado**. O arquivo vai para a pasta de downloads do navegador.
 
 O script Windows foi escrito para esse fluxo, mas sua execução e a abertura no Excel do Windows ainda precisam de homologação. O aplicativo foi executado e testado em Linux/Python 3.12.
@@ -28,7 +28,7 @@ python3.12 -m venv .venv
 - Não há leitura automática de `.env` nesta versão.
 - O banco fica em `data/runtime/consultas.sqlite3`. `ROTA_DATA_DIR` permite escolher outro diretório de armazenamento.
 - Cada consulta tem seu próprio histórico; registros de origem diferentes são preservados. Não existe ainda um catálogo global de processos normalizado em tabelas separadas.
-- O JSON completo sem credencial pode ser baixado em Resultados. Ele pode conter dados públicos de processos; mantenha o arquivo no local apropriado.
+- O XLSX também contém inventário e todos os valores originais em abas próprias. O JSON completo sem credencial pode ser baixado em Resultados. Ele pode conter dados públicos de processos; mantenha o arquivo no local apropriado.
 - Copie o banco somente com o aplicativo parado para um backup simples consistente. A restauração automatizada ainda não foi implementada.
 
 ## Testes

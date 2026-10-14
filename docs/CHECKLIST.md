@@ -60,3 +60,17 @@ Marcado significa concluído com evidência; os demais itens permanecem pendente
 - [ ] Contagens reconciliadas entre API, registros, CNJs e exportação.
 - [ ] Ressalvas e fontes acessíveis ao operador.
 - [ ] Arquivo gerado e verificado quando solicitado.
+
+## Orientações das issues #1 e #2
+
+- [x] Consultar novamente a fonte real e preparar pelo menos 20 CNJs únicos.
+- [x] Habilitar os últimos cinco anos como período padrão editável.
+- [x] Inventariar todos os campos observados e exportar os valores originais, sem descartar campos novos.
+- [x] Disponibilizar inventário e seleção de campos no painel de decisões.
+- [x] Avaliar documentação oficial de Jusbrasil, Escavador e JUDIT.
+- [ ] Confirmar campos prioritários com o responsável, após revisão da amostra.
+- [ ] Obter acesso autorizado à fonte complementar escolhida e validar consulta real.
+- [ ] Definir provedor de login e implantar acesso protegido para a equipe.
+- [ ] Definir responsável pela revisão jurídica.
+
+Evidências e limitações: [Incremento 2](INCREMENTO_2.md). Download público dos assets deve ser confirmado antes da entrega ao usuário.

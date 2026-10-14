@@ -2,6 +2,7 @@ import io,json
 from openpyxl import Workbook,load_workbook
 from openpyxl.styles import Font,PatternFill
 from .core import ENDPOINT
+from .fields import inventario, valores
 
 def texto(v):
     if isinstance(v,str) and v.startswith(('=','+','-','@')):return "'"+v
@@ -24,6 +25,17 @@ def exportar(result,selecionados=None):
     p=aba('PROCESSOS',['Número CNJ','ID origem','Tribunal','Grau','Classe','Órgão','Assuntos','Ajuizamento original','Qualidade técnica','Ressalvas','Indício textual de trânsito','Evidência trânsito','Empresa','CNPJ','Advogado','OAB','Polo passivo','Valor da causa','Resultado decisão'],[[r['cnj'],r['origem_id'],r['tribunal'],r['grau'],r['classe'],r['orgao'],r['assuntos'],r['ajuizamento'],r['qualidade'],r['ressalvas'],r['indicio_transito'],r['evidencia_transito'],None,None,None,None,None,None,None] for r in records])
     for c in list(p.columns)[0][1:]:c.number_format='@'
     aba('MOVIMENTACOES',['Número CNJ','ID origem','Código','Nome','Data original'],[[r['cnj'],r['origem_id'],m.get('codigo'),m.get('nome'),m.get('dataHora')] for r in records for m in r['movimentos']])
+    aba('CAMPOS_DISPONIVEIS', ['Campo original', 'Tipos', 'Registros presentes', 'Total registros', 'Ocorrências', 'Nulos'], [[x['campo'],x['tipos'],x['registros_presentes'],x['total_registros'],x['ocorrencias'],x['nulos']] for x in inventario(records)])
+    def originais():
+        for r in records:
+            for path,kind,value in valores(r['original']):
+                cell=json.dumps(value,ensure_ascii=False) if kind in ('array','object') else value
+                if isinstance(cell,str):
+                    # JSON completo preserva a fonte; fragmentação evita truncar células longas.
+                    chunks=[cell[i:i+32000] for i in range(0,len(cell),32000)] or ['']
+                else: chunks=[cell]
+                for index,chunk in enumerate(chunks,1): yield [r['cnj'],r['origem_id'],path,kind,index,len(chunks),chunk]
+    aba('DADOS_ORIGINAIS', ['Número CNJ', 'ID origem', 'Caminho com índice', 'Tipo', 'Fragmento', 'Total fragmentos', 'Valor original seguro'], originais())
     aba('FONTES',['Página','Fonte','Coleta UTC','SHA256 JSON canônico'],[[i,ENDPOINT,p['coletada'],p['sha256']] for i,p in enumerate(result['paginas'],1)])
     aba('PENDENCIAS',['Item','Limitação'],[['Campos ausentes','Partes, CNPJ, advogado, valor e decisão permanecem nulos.'],['Assuntos','Códigos iniciais observados no piloto; hierarquia e catálogo ainda precisam de revisão jurídica.'],['Trânsito','Indício pelo nome do movimento; regras por códigos e revisão jurídica pendentes.'],['Abrangência','Amostra limitada; registros de outros graus fora da amostra podem existir.']])
     aba('EXECUCAO',['Consulta','Query JSON','Status','Recebidos','Duplicados','Total API'],[[result['id'],json.dumps(result['query'],ensure_ascii=False),result['status'],result['recebidos'],result['duplicados'],json.dumps(result.get('total_api'),ensure_ascii=False)]])
