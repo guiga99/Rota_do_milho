@@ -40,4 +40,6 @@ Para cada execução registrar versão do código, ambiente, data, alvo, quantid
 
 ## Situação atual
 
-Nenhuma suíte automatizada da aplicação foi implementada ou executada nesta entrega documental. O piloto anterior gerou um XLSX legível por OpenPyXL, mas o usuário não conseguiu baixá-lo pelo chat. O fluxo de download e a abertura no Excel permanecem pendentes de teste no produto.
+A suíte atual contém 13 testes automatizados aprovados (ver `tests/`), incluindo interface pelo AppTest, exportação, persistência, paginação parcial, autenticação, timeout e retry.
+
+O primeiro incremento executou consulta real com HTTP 200 e 10 CNJs, gerando XLSX reaberto por OpenPyXL. O download pelo Chromium também foi realizado, com 10 registros conferidos. A confirmação no Excel do Windows permanece pendente. Consulte [Relatório do incremento](VALIDACAO_INCREMENTO_1.md) para limites e evidências.

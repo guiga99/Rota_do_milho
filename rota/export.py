@@ -1,0 +1,36 @@
+import io,json
+from openpyxl import Workbook,load_workbook
+from openpyxl.styles import Font,PatternFill
+from .core import ENDPOINT
+
+def texto(v):
+    if isinstance(v,str) and v.startswith(('=','+','-','@')):return "'"+v
+    return v
+
+def exportar(result,selecionados=None):
+    records=[r for r in result['registros'] if r['qualidade']!='Não exportável' and (selecionados is None or r['cnj'] in selecionados)]
+    w=Workbook();w.remove(w.active)
+    def aba(nome,headers,rows):
+        s=w.create_sheet(nome);s.append(headers)
+        for row in rows:
+            if any(isinstance(v,str) and len(v)>32767 for v in row):raise ValueError('Conteúdo excede limite de célula do Excel; consulte a evidência JSON.')
+            s.append([texto(v) for v in row])
+        s.freeze_panes='A2';s.auto_filter.ref=s.dimensions
+        for c in s[1]:c.font=Font(bold=True,color='FFFFFF');c.fill=PatternFill('solid',fgColor='214E34')
+        for col in s.columns:s.column_dimensions[col[0].column_letter].width=min(60,max(18,max(len(str(c.value or '')) for c in col)+2))
+        if s.max_row>1048576:raise ValueError('Exportação excede limite de linhas do Excel.')
+        return s
+    aba('RESUMO',['Item','Valor'],[['Consulta',result['id']],['Coleta UTC',result['criada']],['Status',result['status']],['Registros recebidos',result['recebidos']],['CNJs únicos na amostra',result['cnjs_unicos']],['CNJs exportados',len({r['cnj'] for r in records})],['Registros de origem exportados',len(records)],['Seleção local',json.dumps(selecionados,ensure_ascii=False) if selecionados is not None else 'Todos os tecnicamente exportáveis'],['Revisão jurídica','Pendente; indício textual não confirma decisão favorável'],['Erro',result.get('erro')]])
+    p=aba('PROCESSOS',['Número CNJ','ID origem','Tribunal','Grau','Classe','Órgão','Assuntos','Ajuizamento original','Qualidade técnica','Ressalvas','Indício textual de trânsito','Evidência trânsito','Empresa','CNPJ','Advogado','OAB','Polo passivo','Valor da causa','Resultado decisão'],[[r['cnj'],r['origem_id'],r['tribunal'],r['grau'],r['classe'],r['orgao'],r['assuntos'],r['ajuizamento'],r['qualidade'],r['ressalvas'],r['indicio_transito'],r['evidencia_transito'],None,None,None,None,None,None,None] for r in records])
+    for c in list(p.columns)[0][1:]:c.number_format='@'
+    aba('MOVIMENTACOES',['Número CNJ','ID origem','Código','Nome','Data original'],[[r['cnj'],r['origem_id'],m.get('codigo'),m.get('nome'),m.get('dataHora')] for r in records for m in r['movimentos']])
+    aba('FONTES',['Página','Fonte','Coleta UTC','SHA256 JSON canônico'],[[i,ENDPOINT,p['coletada'],p['sha256']] for i,p in enumerate(result['paginas'],1)])
+    aba('PENDENCIAS',['Item','Limitação'],[['Campos ausentes','Partes, CNPJ, advogado, valor e decisão permanecem nulos.'],['Assuntos','Códigos iniciais observados no piloto; hierarquia e catálogo ainda precisam de revisão jurídica.'],['Trânsito','Indício pelo nome do movimento; regras por códigos e revisão jurídica pendentes.'],['Abrangência','Amostra limitada; registros de outros graus fora da amostra podem existir.']])
+    aba('EXECUCAO',['Consulta','Query JSON','Status','Recebidos','Duplicados','Total API'],[[result['id'],json.dumps(result['query'],ensure_ascii=False),result['status'],result['recebidos'],result['duplicados'],json.dumps(result.get('total_api'),ensure_ascii=False)]])
+    aba('VALIDACAO',['Número CNJ','ID origem','Qualidade','Motivo'],[[r['cnj'],r['origem_id'],r['qualidade'],r['ressalvas']] for r in result['registros'] if selecionados is None or r['cnj'] in selecionados])
+    b=io.BytesIO();w.save(b);data=b.getvalue();v=load_workbook(io.BytesIO(data))
+    if v['PROCESSOS'].max_row-1!=len(records):raise ValueError('Contagem divergente na exportação.')
+    expected=[[None if x == "" else x for x in row] for row in p.values]
+    actual=[list(row) for row in v['PROCESSOS'].values]
+    if expected!=actual:raise ValueError('Conteúdo divergente ao reabrir Excel.')
+    return data

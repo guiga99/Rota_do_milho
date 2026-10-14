@@ -2,7 +2,9 @@
 
 MVP para localizar processos tributários no DataJud/CNJ, revisar candidatos e exportar consultas em XLSX pelo navegador. Tribunal inicial: TRF4.
 
-**Estado atual:** planejamento e documentação inicial. Houve uma prova de consulta real anterior; a aplicação, o banco persistente, o login e a interface ainda não estão implementados neste repositório. Não há comando de instalação ou execução do aplicativo disponível nesta entrega.
+**Estado atual:** primeiro MVP local implementado. Configuração da chave em sessão, teste DataJud, pesquisa TRF4, validação técnica, histórico SQLite e download XLSX pela interface. Login, cadastro persistente de credenciais e hospedagem pública permanecem pendentes.
+
+Para iniciar, siga [Executar no Windows ou Linux](docs/EXECUTAR.md). No Windows com Python 3.12, execute `iniciar_windows.bat`.
 
 ## Documentação
 
@@ -19,10 +21,10 @@ MVP para localizar processos tributários no DataJud/CNJ, revisar candidatos e e
 
 Configurar a chave DataJud → testar conexão real → consultar uma amostra pequena do TRF4 → validar metadados → revisar resultados → baixar XLSX pelo navegador.
 
-Python 3.12+, Streamlit, cliente HTTP, SQLite e OpenPyXL são as tecnologias propostas. As dependências e suas versões serão fixadas na implementação.
+Python 3.12+, Streamlit, cliente HTTP, SQLite e OpenPyXL são as tecnologias propostas. As dependências diretas estão em `requirements.txt`; o conjunto instalado e testado está fixado em `requirements-lock.txt`.
 
 ## Limites da fonte
 
-A resposta do piloto forneceu metadados e movimentações. Não forneceu partes, CNPJ, advogados, valor da causa ou teor das decisões. A pesquisa usa assuntos disponíveis; não equivale a busca textual em decisões. Processo candidato não comprova decisão favorável ou crédito recuperável.
+A resposta do piloto forneceu metadados e movimentações. Não forneceu partes, CNPJ, advogados, valor da causa ou teor das decisões. A pesquisa usa assuntos disponíveis; não equivale a busca textual em decisões. Os assuntos iniciais foram observados no piloto e ainda precisam de revisão jurídica. Processo candidato não comprova decisão favorável ou crédito recuperável.
 
 Credenciais, JSONs de processos, banco e exportações locais não integram esta publicação. O histórico técnico agregado do piloto está documentado, sem publicar a amostra individual.
