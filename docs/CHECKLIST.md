@@ -117,6 +117,7 @@ Issue #5: Escavador, banco da equipe e teste sem cobrança escolhidos. Acesso pr
 
 - [x] Preparar roteiro de Create app com repositório, branch, entrypoint e Python definidos.
 - [x] Implementar verificador dos Secrets/callback e teste de PostgreSQL somente leitura sem exibir credenciais.
-- [ ] Responsável criar aplicação na conta Streamlit e informar somente a URL pública.
+- [x] Responsável informar URL pública Streamlit: rotadomilho-dnvdghu9uyapphcp5gub6xj.streamlit.app.
+- [ ] Confirmar funcionamento Python nesse endereço; resposta HTML da plataforma não comprova health do aplicativo.
 - [ ] Configurar OAuth web, usuários e PostgreSQL nos Secrets privados da aplicação.
 - [ ] Executar login, consulta, revisão, download e reinício na implantação real.

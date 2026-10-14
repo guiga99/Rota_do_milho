@@ -2,17 +2,17 @@
 
 MVP para localizar processos tributários no DataJud/CNJ, revisar candidatos e exportar consultas em XLSX pelo navegador. Tribunal inicial: TRF4.
 
-**Estado atual:** MVP local disponível; entrada protegida para Streamlit Community Cloud preparada. Configuração da chave em sessão, teste DataJud, pesquisa TRF4/TJSC, validação técnica, tabela configurável e XLSX. Histórico SQLite local ou PostgreSQL externo com TLS; importação de JSON Escavador/JUDIT com proveniência. Google OAuth real, provisionamento do banco, consultas comerciais autenticadas e hospedagem pública da aplicação Python permanecem pendentes.
+**Estado atual:** MVP local disponível; endereço Streamlit informado, com entrada protegida preparada. Configuração da chave em sessão, teste DataJud, pesquisa TRF4/TJSC, validação técnica, tabela configurável e XLSX. Histórico SQLite local ou PostgreSQL externo com TLS; importação JSON Escavador/JUDIT com proveniência. Google OAuth real, banco da equipe, consultas comerciais autenticadas e homologação online permanecem pendentes.
 
 Para iniciar, siga [Executar no Windows ou Linux](docs/EXECUTAR.md). No Windows com Python 3.12, execute `iniciar_windows.bat`.
 
 [Revisão de campos pela equipe](docs/REVISAO_CAMPOS.md): Confirmado, Corrigir ou Informação insuficiente, com comentário, evidência, revisor/data e histórico por pessoa. XLSX inclui REVISOES_CAMPOS. Implantação e login Google reais continuam pendentes.
 
-**Próximo passo Streamlit:** [criar a aplicação na conta do responsável](docs/STREAMLIT_CLOUD.md#ação-inicial-na-conta-do-responsável) e informar sua URL pública. O roteiro inclui verificação dos Secrets e teste de PostgreSQL somente leitura antes da ativação.
+**Endereço Streamlit informado:** https://rotadomilho-dnvdghu9uyapphcp5gub6xj.streamlit.app/ . Login e banco ainda precisam de configuração/homologação. Próximo passo: [configurar o cliente OAuth Google e os Secrets privados](docs/ACESSO_GOOGLE.md#próxima-ação-na-conta-google). O roteiro inclui verificação dos Secrets e teste PostgreSQL somente leitura.
 
 ## Painel de decisões
 
-[Perguntas, escolhas e orientações do projeto](https://guiga99.github.io/Rota_do_milho/) — painel web estático. As escolhas são confirmadas em issues do GitHub; rascunhos locais não constituem aprovação. Veja [como registrar respostas](docs/DECISOES.md). A aplicação de consultas continua local nesta versão.
+[Perguntas, escolhas e orientações do projeto](https://guiga99.github.io/Rota_do_milho/) — painel web estático. As escolhas são confirmadas em issues do GitHub; rascunhos locais não constituem aprovação. Veja [como registrar respostas](docs/DECISOES.md). Uso local disponível; acesso operacional no endereço Streamlit depende de homologação.
 
 [Amostra real de 20 processos e relatório do incremento](docs/INCREMENTO_2.md). O painel permite baixar o Excel e escolher campos prioritários. O período padrão do aplicativo passou a ser os últimos cinco anos.
 

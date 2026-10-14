@@ -1,8 +1,8 @@
 # Piloto no Streamlit Community Cloud
 
-Escolha da [issue #4](https://github.com/guiga99/Rota_do_milho/issues/4): piloto gerenciado com persistência antes de dados operacionais. Código preparado; **nenhuma aplicação Streamlit pública foi criada nesta etapa**. GitHub Pages continua como painel de decisões.
+Escolha da [issue #4](https://github.com/guiga99/Rota_do_milho/issues/4): piloto gerenciado com persistência antes de dados operacionais. Endereço informado pelo responsável em 14/10/2026: **https://rotadomilho-dnvdghu9uyapphcp5gub6xj.streamlit.app/**. Google, banco e funcionamento real ainda precisam de homologação. GitHub Pages continua como painel de decisões.
 
-## Ação inicial na conta do responsável
+## Cadastro da aplicação — URL já recebida
 
 Esta etapa depende da sessão do responsável no Streamlit, que não está conectada a este chat. Em [share.streamlit.io](https://share.streamlit.io/), entre na conta e escolha **Create app**. Preencha:
 
@@ -15,7 +15,7 @@ Esta etapa depende da sessão do responsável no Streamlit, que não está conec
 
 Escolha um subdomínio disponível e publique inicialmente **sem Secrets**, se ainda não os tiver. A aplicação mostrará o aviso de login não configurado e bloqueará acesso às consultas/banco. Essa publicação inicial serve para reservar e obter a URL HTTPS; não é homologação nem ativação operacional. **Informe no chat somente a URL pública obtida.** Com ela definimos o callback Google exato. Não informe login/senha nem o conteúdo dos Secrets no chat ou GitHub.
 
-Depois da URL, configure OAuth web e banco da equipe na área privada conforme os passos abaixo. Se o Streamlit não listar o repositório, confira a conta GitHub vinculada e a autorização dessa conta para `guiga99/Rota_do_milho`.
+URL recebida: seguir agora o [passo a passo Google](ACESSO_GOOGLE.md#próxima-ação-na-conta-google). O callback é `https://rotadomilho-dnvdghu9uyapphcp5gub6xj.streamlit.app/oauth2callback` e consta no modelo Cloud. Configure OAuth e banco na área privada. Se o Streamlit não listar o repositório, confira a conta GitHub vinculada e sua autorização.
 
 ## Configuração concreta
 
@@ -71,6 +71,6 @@ Importação e revisão bloqueiam a linha por transação, evitando perder anota
 
 Testes automatizados verificam bloqueio sem OAuth/DB, autorização Google e exportação sintética. `scripts/testar_postgres.py` usa PostgreSQL 17 descartável com TLS: aceita CA/hostname corretos, rejeita CA incorreta, conserva JSON/Unicode, testa upsert/importações concorrentes e compara histórico após reinício. Remove somente seu container/volume; requer Docker/OpenSSL e não acessa produção. CI executa o teste.
 
-Faltam conta/deploy Streamlit, OAuth e banco provisionado com configuração privada. Não há credenciais desses serviços no ambiente. Ainda não há URL da aplicação de pesquisas nem login Google real homologado.
+URL Streamlit recebida; OAuth e banco com configuração privada continuam pendentes. A verificação HTTP encontrou o fluxo de sessão inicial da plataforma e HTML, inclusive em /_stcore/health. Isso não comprova que o processo Python esteja saudável nem que Google/banco funcionem. Faltam validação da tela/versão implantada, login real e histórico. Não há credenciais desses serviços neste ambiente.
 
 Referências oficiais HTTP 200, 14/10/2026: [preparar/deploy](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app), [Secrets](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/secrets-management), [configurações](https://docs.streamlit.io/deploy/streamlit-community-cloud/manage-your-app/app-settings).

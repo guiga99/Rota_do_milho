@@ -59,3 +59,7 @@ Streamlit Community Cloud escolhido, com persistência antes de uso operacional.
 ## Issue #5 e aprovação da revisão no chat
 
 Issue #5 validada: Escavador, banco existente da equipe, teste sem cobrança. Não há autorização de compra/consumo pago. No chat, o responsável aprovou a revisão por colegas com Confirmado/Corrigir/Informação insuficiente; implementada conforme REVISAO_CAMPOS.md. Essa aprovação é documentada, sem criar uma issue em nome do usuário. Revisões privadas dos processos não são enviadas ao painel de decisões.
+
+## Endereço Streamlit informado no chat
+
+URL recebida: https://rotadomilho-dnvdghu9uyapphcp5gub6xj.streamlit.app/ . Callback ajustado no modelo público e no roteiro Google. Credenciais, lista privada e homologação online continuam pendentes. A URL é uma orientação do responsável; não foi criada issue em seu nome. Resposta HTTP da plataforma não equivale a validação do processo Python/login/banco.
