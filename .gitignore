@@ -1,0 +1,31 @@
+# Credenciais e configuração local
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+secrets/
+*.pem
+*.key
+
+# Estado operacional e dados coletados
+/output/
+/outputs/
+/exports/
+/data/raw/
+/data/runtime/
+/logs/
+*.sqlite
+*.sqlite3
+*.db
+*.db-*
+*.xlsx
+
+# Ambiente Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.DS_Store

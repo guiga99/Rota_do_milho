@@ -1,0 +1,104 @@
+﻿id,termo_original,status_mapeamento
+1,Terço constitucional de férias gozadas,pendente
+2,Terço constitucional de férias indenizadas,pendente
+3,Férias gozadas,pendente
+4,Férias indenizadas,pendente
+5,Férias proporcionais indenizadas,pendente
+6,Férias em dobro,pendente
+7,Abono pecuniário de férias,pendente
+8,Terço constitucional sobre abono pecuniário,pendente
+9,Férias pagas na rescisão,pendente
+10,Reflexos de férias sobre outras verbas,pendente
+11,Salário-maternidade,pendente
+12,Complementação de salário-maternidade,pendente
+13,Salário-paternidade,pendente
+14,Primeiros 15 dias de afastamento por doença,pendente
+15,Primeiros 15 dias de afastamento por acidente de trabalho,pendente
+16,Complementação de auxílio por incapacidade temporária,pendente
+17,Licença remunerada,pendente
+18,Licença não remunerada,pendente
+19,Auxílio-doença pago pelo INSS,pendente
+20,Auxílio-acidente,pendente
+21,Vale-transporte,pendente
+22,Vale-transporte pago em dinheiro,pendente
+23,Vale-alimentação,pendente
+24,Vale-refeição,pendente
+25,Alimentação fornecida in natura,pendente
+26,Cesta básica,pendente
+27,Auxílio-alimentação pago em dinheiro,pendente
+28,Auxílio-combustível,pendente
+29,Transporte fornecido pela empresa,pendente
+30,Ajuda de custo para deslocamento,pendente
+31,Reembolso de despesas de transporte,pendente
+32,Diárias de viagem,pendente
+33,Auxílio-creche,pendente
+34,Reembolso-creche,pendente
+35,Auxílio-babá,pendente
+36,Auxílio-educação,pendente
+37,Bolsa de estudos,pendente
+38,Plano de saúde,pendente
+39,Assistência odontológica,pendente
+40,Seguro de vida,pendente
+41,Previdência privada,pendente
+42,Auxílio-funeral,pendente
+43,Auxílio-natalidade,pendente
+44,Auxílio-moradia,pendente
+45,Ajuda de custo,pendente
+46,Reembolso de despesas profissionais,pendente
+47,Auxílio-home office,pendente
+48,Auxílio-internet e telefonia,pendente
+49,Aviso-prévio indenizado,pendente
+50,Reflexo do aviso-prévio indenizado no 13º salário,pendente
+51,Aviso-prévio trabalhado,pendente
+52,Indenização adicional da Lei nº 7.238/1984,pendente
+53,Indenização por dispensa sem justa causa,pendente
+54,Indenização por estabilidade provisória,pendente
+55,Indenização por danos morais,pendente
+56,Indenização por danos materiais,pendente
+57,Indenização decorrente de acordo trabalhista,pendente
+58,Multa do art. 477 da CLT,pendente
+59,Multa do art. 467 da CLT,pendente
+60,Indenização por rescisão antecipada de contrato,pendente
+61,FGTS rescisório,pendente
+62,Multa rescisória do FGTS,pendente
+63,Participação nos lucros e resultados (PLR),pendente
+64,Prêmios por desempenho,pendente
+65,Prêmios por liberalidade,pendente
+66,Abonos eventuais,pendente
+67,Gratificações eventuais,pendente
+68,Gratificação por tempo de serviço,pendente
+69,Gratificação de função,pendente
+70,Bônus de contratação,pendente
+71,Bônus de retenção,pendente
+72,Stock options,pendente
+73,Participação acionária,pendente
+74,Comissões,pendente
+75,Premiações de campanhas de vendas,pendente
+76,Horas extras,pendente
+77,Adicional de horas extras,pendente
+78,Adicional noturno,pendente
+79,Adicional de insalubridade,pendente
+80,Adicional de periculosidade,pendente
+81,Adicional de transferência,pendente
+82,Adicional de sobreaviso,pendente
+83,Adicional de prontidão,pendente
+84,Descanso semanal remunerado (DSR),pendente
+85,DSR sobre horas extras,pendente
+86,DSR sobre comissões,pendente
+87,Banco de horas pago em dinheiro,pendente
+88,Intervalo intrajornada indenizado,pendente
+89,Intervalo interjornada,pendente
+90,Indenização pela supressão de intervalo,pendente
+91,Salário-família,pendente
+92,Abono salarial,pendente
+93,Abono de permanência,pendente
+94,Quebra de caixa,pendente
+95,Gorjetas,pendente
+96,Gueltas,pendente
+97,Direitos de imagem,pendente
+98,Direitos autorais,pendente
+99,Remuneração de diretores,pendente
+100,Pró-labore,pendente
+101,"Sistema S (incra, sebrae, salário educação, sesc, sesi, senai)",pendente
+102,Contribuições parafiscais,pendente
+103,Contribuição previdenciária,pendente
