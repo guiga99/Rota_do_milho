@@ -51,7 +51,7 @@ function render(){
    const p=node('p','source-note','Origem da pergunta: ');const a=node('a','',q.source.label);a.href='https://github.com/'+REPO+'/blob/main/docs/'+q.source.doc;a.target='_blank';a.rel='noopener';p.append(a);card.append(p);
   }
   const options=node('div','options');options.setAttribute('role','group');options.setAttribute('aria-label',q.title);
-  for(const [id,label,desc] of q.options){const b=node('button','option');b.type='button';b.setAttribute('aria-pressed',String(current.option===id));b.append(node('strong','',label),node('span','',desc));b.addEventListener('click',()=>{draft.decisions[q.id]={option:id,note:current.note||''};saveLocal();render();status('Escolha guardada como rascunho. Registre no GitHub para confirmar.');});options.append(b);}
+  for(const [id,label,desc] of q.options){const b=node('button','option');b.type='button';b.setAttribute('aria-pressed',String(current.option===id));b.append(node('strong','',label),node('span','',desc));b.addEventListener('click',()=>{draft.decisions[q.id]={option:id,note:selected(q).note||''};saveLocal();render();status('Escolha guardada como rascunho. Registre no GitHub para confirmar.');});options.append(b);}
   card.append(options);
   const label=node('label','', 'Sua orientação para esta decisão');label.htmlFor='note-'+q.id;card.append(label);
   const note=node('textarea');note.id=label.htmlFor;note.rows=2;note.maxLength=1000;note.value=current.note||'';note.placeholder=q.meeting?'Critério, ressalva ou divergência · função responsável · próximo passo e prazo':'Opcional: ajuste, condição ou alternativa…';

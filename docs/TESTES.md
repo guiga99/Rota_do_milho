@@ -75,4 +75,4 @@ Seis testes adicionais verificam callback HTTPS exato, campos obrigatórios/plac
 
 ## Painel de negócio — 15/10/2026
 
-Chromium: 20 perguntas de negócio e 10 essenciais por padrão; filtros não apagam rascunhos; campos de configuração anteriores ficam recolhidos; registro GitHub mantém schema/autoria/contexto; respostas antigas continuam reconhecidas. Responsável jurídico adiado permanece aberto e uma definição posterior atualiza a pendência. Inventário e downloads anteriores, respostas extensas, texto externo seguro e layout mobile continuam verificados. Issues simuladas no teste não são publicadas.
+Chromium: 20 perguntas de negócio e 10 essenciais por padrão; filtros não apagam rascunhos; nota escrita antes de escolher uma alternativa é preservada; campos de configuração anteriores ficam recolhidos; registro GitHub mantém schema/autoria/contexto; respostas antigas continuam reconhecidas. Responsável jurídico adiado permanece aberto e uma definição posterior atualiza a pendência. Inventário e downloads anteriores, respostas extensas, texto externo seguro e layout mobile continuam verificados. Issues simuladas no teste não são publicadas.

@@ -92,8 +92,10 @@ try:
   results.append('Responsável jurídico adiado continua aberto; decisão posterior do responsável encerra a pendência')
   page.locator('#essential-only').uncheck()
   assert page.locator('#questions .card:visible').count()==20
+  page.locator('#note-neg_ausencias').fill('Critério de teste escrito antes da escolha.')
   page.locator('#q-neg_ausencias .option').first.click()
   assert page.evaluate('payload().decisions.some(d=>d.id==="neg_ausencias")')
+  assert page.locator('#note-neg_ausencias').input_value()=='Critério de teste escrito antes da escolha.'
   page.locator('#essential-only').check()
   assert page.locator('#q-neg_ausencias').is_hidden()
   results.append('20 perguntas de negócio, 10 essenciais, fontes e opção fora da pauta essencial preservada')
