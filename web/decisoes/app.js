@@ -3,7 +3,7 @@ const REPO = 'guiga99/Rota_do_milho';
 const OWNER = 'guiga99';
 const STORAGE = 'rota.decisoes.v1';
 const MARKER = '<!-- rota-decisions:v1 -->';
-const questions = [
+const previousQuestions = [
  {id:'proxima_entrega',title:'Qual deve ser a próxima entrega?',description:'O MVP local já consulta o CNJ e exporta Excel. Há três caminhos possíveis para o próximo incremento.',suggestion:'Refinar a seleção jurídica primeiro reduz falsos positivos antes de ampliar o uso.',options:[['selecao_juridica','Refinar seleção jurídica','Validar assuntos, termos e evidências de trânsito.'],['consulta_online','Consulta pela Internet','Priorizar hospedagem protegida com login.'],['homologacao_windows','Validar no Windows','Conferir instalação, download e abertura no Excel.']]},
  {id:'periodo_padrao',title:'Qual período sugerir nas pesquisas?',description:'Processos antigos podem ser relevantes para trânsito em julgado. Um período restrito pode excluí-los.',suggestion:'Manter sem restrição de período como padrão, permitindo informar datas em cada pesquisa.',options:[['sem_restricao','Sem restrição de período','A consulta continua limitada a até 100 candidatos.'],['dez_anos','Últimos 10 anos','Sugestão inicial editável a cada consulta.'],['cinco_anos','Últimos 5 anos','Uma janela menor, também editável.']]},
  {id:'dados_complementares',title:'Como tratar os dados que o DataJud não fornece?',description:'Empresa, advogado, valor e teor da decisão não vieram na amostra do piloto.',suggestion:'Começar com revisão manual e fonte registrada, sem contratação automática de serviços.',options:[['manual','Revisão manual','Permitir complementar os dados com fonte e data.'],['avaliar_fontes','Avaliar outras fontes','Pesquisar alternativas; serviços pagos exigem nova decisão.'],['metadados','Só metadados por enquanto','Manter esses campos pendentes no primeiro ciclo.']]},
@@ -16,6 +16,9 @@ const questions = [
  {id:'persistencia_cloud',title:'Qual PostgreSQL usar para o histórico online?',description:'Streamlit Community Cloud foi escolhido. A entrada cloud_app.py exige Google e PostgreSQL externo; SQLite continua disponível para desenvolvimento local. Informações de conexão ficam somente nos Secrets privados.',suggestion:'Usar um PostgreSQL existente, se disponível; caso contrário, avaliar Neon ou Supabase com TLS, região e backup definidos.',options:[['existente','Banco da equipe','Informar apenas que existe; configurar credenciais em canal protegido.'],['avaliar_neon','Avaliar Neon','Planejar PostgreSQL gerenciado sem criar conta ou contratar automaticamente.'],['avaliar_supabase','Avaliar Supabase','Planejar PostgreSQL gerenciado com revisão de região e limites.']]},
  {id:'orcamento_piloto',title:'Qual limite de custo para a primeira consulta complementar?',description:'Uma requisição comercial pode consumir créditos, inclusive em caso de retorno incompleto. Esta decisão orienta o piloto de 3 CNJs; preços e teto serão conferidos antes da execução.',suggestion:'Começar com créditos de teste sem cobrança. Chaves, senhas e detalhes de pagamento não devem ser escritos aqui.',options:[['sem_cobranca','Somente teste sem cobrança','Usar apenas acesso de avaliação com custo financeiro zero.'],['teto_informado','Definirei um teto','Informar nas orientações o valor total em reais e condições.'],['definir_depois','Decidir após proposta','Prosseguir com documentação e importação, sem consultas comerciais.']]}
 ];
+const meetingQuestions=BUSINESS_QUESTIONS.map(q=>({...q,meeting:true}));
+const meetingIds=new Set(meetingQuestions.map(q=>q.id));
+const questions=[...meetingQuestions,...previousQuestions.filter(q=>!meetingIds.has(q.id))];
 let draft = {decisions:{},note:''};
 let records = [], latest = {}, availableStorage = true;
 let syncing = false, lastReturnRefresh = 0;
@@ -26,28 +29,40 @@ try {const d=JSON.parse(localStorage.getItem(STORAGE)||'null');if(d&&d.decisions
 function saveLocal(){try{localStorage.setItem(STORAGE,JSON.stringify(draft));}catch{availableStorage=false;status('O navegador não permite guardar rascunhos. Baixe suas escolhas antes de sair.');}}
 function selected(q){return draft.decisions[q.id]||latest[q.id]||{option:null,note:''};}
 function differences(){return questions.filter(q=>{const d=draft.decisions[q.id],r=latest[q.id];return d&&(!r||d.option!==r.option||d.note!==r.note);});}
+function pending(q){return !latest[q.id]||latest[q.id].option===null||(q.unresolvedOptions||[]).includes(latest[q.id].option);}
+function applyMeetingFilter(){
+ const essential=$('essential-only').checked;
+ for(const card of document.querySelectorAll('#questions .card'))card.hidden=essential&&card.dataset.essential!=='true';
+ $('meeting-visible').textContent=(essential?meetingQuestions.filter(q=>q.essential).length:meetingQuestions.length)+' perguntas exibidas · '+meetingQuestions.length+' na pauta completa';
+}
 function render(){
- const root=$('questions');root.replaceChildren();
+ const root=$('questions');root.replaceChildren();$('previous-questions').replaceChildren();
+ const groups={};
+ for(const g of BUSINESS_GROUPS){const section=node('section','business-group');section.id='grupo-'+g.id;section.append(node('h2','',g.title),node('p','muted',g.description));groups[g.id]=section;root.append(section);}
  for(const [index,q] of questions.entries()){
   const current=selected(q),remote=latest[q.id];
   const changed=differences().some(x=>x.id===q.id);
-  const card=node('article','card');card.id='q-'+q.id;
+  const card=node('article','card');card.id='q-'+q.id;card.dataset.essential=String(!!q.essential);
   const top=node('div','card-top');top.append(node('span','card-number',String(index+1).padStart(2,'0')+' / DECISÃO'));
   top.append(node('span','status'+(changed?' draft':''),changed?'Rascunho local':remote?'Registrada no GitHub':'Aguardando sua escolha'));card.append(top);
-  card.append(node('h3','',q.title),node('p','description',q.description),node('p','suggestion','Sugestão: '+q.suggestion));
+  card.append(node('h3','',q.title),node('p','description',q.description),node('p','suggestion',q.challenge?'Para discutir: '+q.challenge:'Sugestão: '+q.suggestion));
+  if(q.meeting){
+   if(q.essential)card.append(node('p','essential-badge','ESSENCIAL PARA A REUNIÃO'));
+   const p=node('p','source-note','Origem da pergunta: ');const a=node('a','',q.source.label);a.href='https://github.com/'+REPO+'/blob/main/docs/'+q.source.doc;a.target='_blank';a.rel='noopener';p.append(a);card.append(p);
+  }
   const options=node('div','options');options.setAttribute('role','group');options.setAttribute('aria-label',q.title);
   for(const [id,label,desc] of q.options){const b=node('button','option');b.type='button';b.setAttribute('aria-pressed',String(current.option===id));b.append(node('strong','',label),node('span','',desc));b.addEventListener('click',()=>{draft.decisions[q.id]={option:id,note:current.note||''};saveLocal();render();status('Escolha guardada como rascunho. Registre no GitHub para confirmar.');});options.append(b);}
   card.append(options);
   const label=node('label','', 'Sua orientação para esta decisão');label.htmlFor='note-'+q.id;card.append(label);
-  const note=node('textarea');note.id=label.htmlFor;note.rows=2;note.maxLength=1000;note.value=current.note||'';note.placeholder='Opcional: ajuste, condição ou alternativa…';
+  const note=node('textarea');note.id=label.htmlFor;note.rows=2;note.maxLength=1000;note.value=current.note||'';note.placeholder=q.meeting?'Critério, ressalva ou divergência · função responsável · próximo passo e prazo':'Opcional: ajuste, condição ou alternativa…';
   note.addEventListener('input',()=>{draft.decisions[q.id]={option:selected(q).option||null,note:note.value};saveLocal();updateCounts();});card.append(note);
   if(remote){const p=node('p','saved-detail','Registro: '+new Date(remote.date).toLocaleString('pt-BR')+' · ');const link=node('a','', '#'+remote.issue);link.href=remote.url;link.target='_blank';link.rel='noopener';p.append(link);card.append(p);}
-  root.append(card);
+  (q.meeting?groups[q.group]:$('previous-questions')).append(card);
  }
- updateCounts();
+ updateCounts();applyMeetingFilter();
 }
-function updateCounts(){const changes=differences();for(const q of questions){const s=document.querySelector('#q-'+q.id+' .status');if(s){const changed=changes.some(x=>x.id===q.id);s.className='status'+(changed?' draft':'');s.textContent=changed?'Rascunho local':latest[q.id]?'Registrada no GitHub':'Aguardando sua escolha';}}$('count-total').textContent=questions.filter(q=>!latest[q.id]).length;$('count-draft').textContent=changes.length+(draft.note.trim()?1:0);$('count-saved').textContent=Object.keys(latest).length;$('save').disabled=!changes.length&&!draft.note.trim();}
-function payload(){return {schema:'rota-decisions/v1',project:REPO,created_at:new Date().toISOString(),decisions:differences().map(q=>({id:q.id,question:q.title,option:draft.decisions[q.id].option||null,label:q.options.find(x=>x[0]===draft.decisions[q.id].option)?.[1]||'Orientação sem opção',note:(draft.decisions[q.id].note||'').trim()})),guidance:draft.note.trim()};}
+function updateCounts(){const changes=differences();for(const q of questions){const s=document.querySelector('#q-'+q.id+' .status');if(s){const changed=changes.some(x=>x.id===q.id);s.className='status'+(changed?' draft':'');s.textContent=changed?'Rascunho local':latest[q.id]?(pending(q)?'Pendência registrada':'Registrada no GitHub'):'Aguardando sua escolha';}}$('count-total').textContent=meetingQuestions.filter(pending).length;$('count-draft').textContent=changes.length+(draft.note.trim()?1:0);$('count-saved').textContent=meetingQuestions.filter(q=>!pending(q)).length;$('previous-count').textContent=questions.filter(q=>!q.meeting&&latest[q.id]).length+' definições anteriores registradas';$('save').disabled=!changes.length&&!draft.note.trim();}
+function payload(){return {schema:'rota-decisions/v1',project:REPO,context:'reuniao-negocio-2026-10-15',created_at:new Date().toISOString(),decisions:differences().map(q=>({id:q.id,question:q.title,option:draft.decisions[q.id].option||null,label:q.options.find(x=>x[0]===draft.decisions[q.id].option)?.[1]||'Orientação sem opção',note:(draft.decisions[q.id].note||'').trim()})),guidance:draft.note.trim()};}
 function issueBody(p){const lines=[MARKER,'## Orientações do responsável pelo projeto','',...p.decisions.map(d=>`- **${d.question}**\n  - Escolha: ${d.label}\n  - Orientação: ${d.note||'—'}`),'',p.guidance?'### Orientação geral\n'+p.guidance:'','### Registro estruturado','```json',JSON.stringify(p,null,2),'```','','Registro enviado pelo painel de decisões. Não contém credenciais.'];return lines.join('\n');}
 $('save').addEventListener('click',()=>{
  const p=payload();if(!p.decisions.length&&!p.guidance)return;
@@ -97,6 +112,7 @@ async function sync(){
  finally{syncing=false;$('refresh').disabled=false;}
 }
 $('refresh').addEventListener('click',sync);
+$('essential-only').addEventListener('change',applyMeetingFilter);
 function syncOnReturn(){
  if(document.visibilityState==='visible'&&Date.now()-lastReturnRefresh>2500)sync();
 }

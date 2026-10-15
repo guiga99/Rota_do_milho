@@ -63,3 +63,9 @@ Issue #5 validada: Escavador, banco existente da equipe, teste sem cobrança. N�
 ## Endereço Streamlit informado no chat
 
 URL recebida: https://rotadomilho-dnvdghu9uyapphcp5gub6xj.streamlit.app/ . Callback ajustado no modelo público e no roteiro Google. Credenciais, lista privada e homologação online continuam pendentes. A URL é uma orientação do responsável; não foi criada issue em seu nome. Resposta HTTP da plataforma não equivale a validação do processo Python/login/banco.
+
+## Reunião de negócio — 15/10/2026
+
+A pedido do responsável, a pauta principal passou a ser qualificação de leads: 20 perguntas em quatro blocos, com filtro inicial de 10 essenciais. Ver [pauta e origem das perguntas](PAUTA_NEGOCIO.md). Definições e materiais de TI continuam preservados em área recolhida, fora da discussão atual.
+
+Novos IDs comerciais `neg_*` e a pergunta existente `revisao_juridica` são lidos pelo mesmo contrato. Respostas pendentes como `revisao_juridica=pendente` não contam como definição concluída. O campo adicional `context` identifica a reunião; não muda autoria ou aprovação. Nenhuma alternativa foi respondida pelo assistente. A issue continua sendo síntese do responsável, sem votação individual ou consenso presumido.

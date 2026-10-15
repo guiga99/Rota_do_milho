@@ -121,3 +121,13 @@ Issue #5: Escavador, banco da equipe e teste sem cobrança escolhidos. Acesso pr
 - [ ] Confirmar funcionamento Python nesse endereço; resposta HTML da plataforma não comprova health do aplicativo.
 - [ ] Configurar OAuth web, usuários e PostgreSQL nos Secrets privados da aplicação.
 - [ ] Executar login, consulta, revisão, download e reinício na implantação real.
+
+## Reunião de negócio — 15/10/2026
+
+- [x] Levantar pendências de negócio na documentação e nas decisões do responsável.
+- [x] Preparar 20 perguntas com alternativas, críticas e fontes; destacar 10 essenciais.
+- [x] Colocar a pauta de leads no painel e recolher materiais de configuração fora da reunião.
+- [ ] Time registrar público/proposta, critérios de qualificação/exclusão e teses prioritárias.
+- [ ] Definir responsáveis jurídico/comercial, meta, prazo e próximo experimento.
+
+As alternativas do [roteiro de negócio](PAUTA_NEGOCIO.md) são hipóteses, sem respostas presumidas pelo assistente.

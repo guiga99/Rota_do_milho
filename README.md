@@ -12,6 +12,8 @@ Para iniciar, siga [Executar no Windows ou Linux](docs/EXECUTAR.md). No Windows 
 
 ## Painel de decisões
 
+**Reunião de negócio de 15/10/2026:** [20 perguntas para criticar e validar a qualificação de leads](docs/PAUTA_NEGOCIO.md), com 10 essenciais, alternativas e notas no painel. Público/proposta, qualificação, abordagem/responsáveis e viabilidade/piloto; configuração de TI fora da pauta principal.
+
 [Perguntas, escolhas e orientações do projeto](https://guiga99.github.io/Rota_do_milho/) — painel web estático. As escolhas são confirmadas em issues do GitHub; rascunhos locais não constituem aprovação. Veja [como registrar respostas](docs/DECISOES.md). Uso local disponível; acesso operacional no endereço Streamlit depende de homologação.
 
 [Amostra real de 20 processos e relatório do incremento](docs/INCREMENTO_2.md). O painel permite baixar o Excel e escolher campos prioritários. O período padrão do aplicativo passou a ser os últimos cinco anos.

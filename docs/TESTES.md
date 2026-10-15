@@ -72,3 +72,7 @@ Sete testes específicos adicionais verificam identidade/permissão, ausência s
 ## Pré-validação Streamlit
 
 Seis testes adicionais verificam callback HTTPS exato, campos obrigatórios/placeholder, administradores autorizados, cookie, TLS e erros sanitizados. O teste de banco é somente leitura e rejeita TLS não verificado antes de conectar; também foi executado contra PostgreSQL 17 descartável com certificado verificado. Essa evidência não comprova conta Streamlit, Google real nem banco da equipe. O roteiro registra a ação do responsável de criar a aplicação e informar sua URL pública.
+
+## Painel de negócio — 15/10/2026
+
+Chromium: 20 perguntas de negócio e 10 essenciais por padrão; filtros não apagam rascunhos; campos de configuração anteriores ficam recolhidos; registro GitHub mantém schema/autoria/contexto; respostas antigas continuam reconhecidas. Responsável jurídico adiado permanece aberto e uma definição posterior atualiza a pendência. Inventário e downloads anteriores, respostas extensas, texto externo seguro e layout mobile continuam verificados. Issues simuladas no teste não são publicadas.
