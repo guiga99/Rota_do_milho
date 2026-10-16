@@ -76,3 +76,22 @@ Seis testes adicionais verificam callback HTTPS exato, campos obrigatórios/plac
 ## Painel de negócio — 15/10/2026
 
 Chromium: 20 perguntas de negócio e 10 essenciais por padrão; filtros não apagam rascunhos; nota escrita antes de escolher uma alternativa é preservada; campos de configuração anteriores ficam recolhidos; registro GitHub mantém schema/autoria/contexto; respostas antigas continuam reconhecidas. Responsável jurídico adiado permanece aberto e uma definição posterior atualiza a pendência. Inventário e downloads anteriores, respostas extensas, texto externo seguro e layout mobile continuam verificados. Issues simuladas no teste não são publicadas.
+
+## Aceite previsto da estratégia da issue #6 — ainda não executado
+
+Estes são cenários para o próximo incremento, não resultados da suíte atual.
+
+| Cenário | Evidência esperada |
+|---|---|
+| Ajuizamento há mais de cinco anos e trânsito dentro dos últimos quatro | Não excluir pelo ajuizamento; avaliar demais critérios com evidência do trânsito |
+| Ajuizamento recente sem trânsito ou com data conflitante | Manter pendência/acompanhamento, sem simular trânsito confirmado |
+| Data no limite, anterior ao limite ou futura | Aplicar convenção de janela aprovada e data de referência registrada; rejeitar data futura como evidência válida |
+| Baixa/arquivamento ou decisão parcial | Não substituir trânsito ou favorabilidade; exigir contexto e revisão |
+| Valor inferior, igual, superior a R$ 50 mil ou ausente | Usar regra de corte a confirmar, com fonte/campo/moeda; ausente não vira zero; crédito e valor da causa não se confundem |
+| Mesmo CNJ em dois graus; empresa com vários CNJs | Preservar fontes, contar processos distintos e não duplicar empresas/contatos; vínculo precisa de evidência |
+| Catálogo completo com termos sem código validado | Manter 103 termos, registrar lacunas; não declarar todos pesquisados ou juridicamente aprovados |
+| Investigação → apto a proposta | Exigir critérios/aceite definidos, responsável e evidência; revisão de campo isolada não conclui passagem |
+| Encaminhamento a parceiro | Preservar motivo, estado de qualificação e pendências; não transformar inviável em oportunidade validada |
+| Proposta e resultado do piloto | Distinguir proposta viável, contrato e recuperação; parcela fixa e êxito separados; denominadores por empresa/processo explícitos |
+
+Antes de executar: resolver as regras abertas em [ESTRATEGIA_NEGOCIO.md](ESTRATEGIA_NEGOCIO.md). Manter comparação rastreável dos dados baixados com as evidências originais e reavaliar a amostra antiga para o novo cenário.

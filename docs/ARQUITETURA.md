@@ -44,3 +44,9 @@ Classificação jurídica é derivada e precisa ter versão, evidência e ressal
 ## Excel
 
 Abas previstas: RESUMO, PROCESSOS, MOVIMENTACOES, FONTES, PENDENCIAS, EXECUCAO e VALIDACAO. Incluir os filtros locais de uma seleção exportada. Usar filtros, cabeçalhos congelados e CNJ em texto. Validar limites de linhas/células do formato e reportar qualquer truncamento; manter conteúdo completo na evidência original.
+
+## Evolução prevista pela issue #6
+
+Requisitos ainda não implementados: associar empresa/contribuinte a processos com evidência; registrar trânsito confirmado (data, documento, fonte, revisão), janela temporal e motivo da seleção; separar estágio de qualificação, prioridade e destino comercial; registrar responsáveis, abordagens e encaminhamentos. Preservar contagens distintas de processos e empresas. Ranking por quantidade e unidade comercial dependem de definição.
+
+O novo recorte é quatro anos de trânsito, sem restrição implícita por ajuizamento. Não converter baixa ou movimento textual em confirmação automática. Nenhuma migração ou alteração funcional acompanha esta atualização documental. Ver [estratégia](ESTRATEGIA_NEGOCIO.md).

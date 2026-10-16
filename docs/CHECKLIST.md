@@ -131,3 +131,20 @@ Issue #5: Escavador, banco da equipe e teste sem cobrança escolhidos. Acesso pr
 - [ ] Definir responsáveis jurídico/comercial, meta, prazo e próximo experimento.
 
 As alternativas do [roteiro de negócio](PAUTA_NEGOCIO.md) são hipóteses, sem respostas presumidas pelo assistente.
+
+## Adequação à estratégia da issue #6
+
+- [x] Validar autoria/contrato da issue e interpretar alternativas em conjunto com as notas.
+- [x] Documentar cliente contribuinte, acompanhamento da recuperação, 103 termos, sequência B/C/A, modelo fixo + êxito e destinação a parceiros.
+- [x] Substituir no planejamento cinco anos de ajuizamento por quatro anos de trânsito, preservando histórico e sinalizando diferença do código.
+- [ ] Validar fonte/data/documento de trânsito e valor da causa na amostra anterior; não presumir que ela atende ao novo recorte.
+- [ ] Definir bordas da janela, direção da ordenação, corte monetário e destino de casos fora da janela/sem evidência.
+- [ ] Implementar novo filtro temporal e piso do piloto com dados validados e tratamento de ausências.
+- [ ] Definir associação empresa/processos e ranking por quantidade, sem duplicar graus ou contatos.
+- [ ] Definir e implementar critérios de passagem entre investigação e apto a proposta; nomear responsável jurídico.
+- [ ] Definir responsáveis, condições e prazos de abordagem e encaminhamento a parceiros.
+- [ ] Detalhar parcela fixa, percentual/base do êxito e divisão de responsabilidades/receita.
+- [ ] Fixar meta, prazo e denominadores de propostas viáveis; medir esforço, conversão e motivos de destinação.
+- [ ] Validar os cenários comerciais previstos em TESTES.md após implementação.
+
+Definições de direção estão registradas; critérios operacionais, homologação e validação do negócio não estão concluídos. Referência: [ESTRATEGIA_NEGOCIO.md](ESTRATEGIA_NEGOCIO.md).

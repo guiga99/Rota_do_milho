@@ -1,5 +1,7 @@
 # Reunião do time — qualificação de leads
 
+**Atualização após a reunião:** a [issue #6](https://github.com/guiga99/Rota_do_milho/issues/6) registra dez respostas, incluindo a manutenção da pendência jurídica. A [estratégia vigente](ESTRATEGIA_NEGOCIO.md) incorpora as notas: todos os 103 termos, quatro anos de trânsito, piso temporário e receita híbrida. A pauta abaixo preserva as perguntas e hipóteses originais; as decisões registradas substituem as propostas anteriores nos temas respondidos. As demais perguntas permanecem abertas.
+
 Pauta preparada para **15/10/2026, America/Sao_Paulo**, a pedido do responsável. Objetivo: criticar e validar o negócio de identificação de leads qualificados. Alternativas e sugestões abaixo são hipóteses para discussão, não decisões aprovadas nem conclusões jurídicas.
 
 Painel: https://guiga99.github.io/Rota_do_milho/ . A pauta abre com **10 essenciais**, permite exibir **20 perguntas** e preserva definições anteriores em área recolhida. Configuração de ambiente/TI fica fora desta reunião.

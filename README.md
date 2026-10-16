@@ -8,7 +8,13 @@ Para iniciar, siga [Executar no Windows ou Linux](docs/EXECUTAR.md). No Windows 
 
 [Revisão de campos pela equipe](docs/REVISAO_CAMPOS.md): Confirmado, Corrigir ou Informação insuficiente, com comentário, evidência, revisor/data e histórico por pessoa. XLSX inclui REVISOES_CAMPOS. Implantação e login Google reais continuam pendentes.
 
-**Endereço Streamlit informado:** https://rotadomilho-dnvdghu9uyapphcp5gub6xj.streamlit.app/ . Login e banco ainda precisam de configuração/homologação. Próximo passo: [configurar o cliente OAuth Google e os Secrets privados](docs/ACESSO_GOOGLE.md#próxima-ação-na-conta-google). O roteiro inclui verificação dos Secrets e teste PostgreSQL somente leitura.
+**Endereço Streamlit informado:** https://rotadomilho-dnvdghu9uyapphcp5gub6xj.streamlit.app/ . Login e banco ainda precisam de configuração/homologação. Para a homologação técnica: [configurar o cliente OAuth Google e os Secrets privados](docs/ACESSO_GOOGLE.md#próxima-ação-na-conta-google). O roteiro inclui verificação dos Secrets e teste PostgreSQL somente leitura.
+
+## Estratégia vigente
+
+A [issue #6](https://github.com/guiga99/Rota_do_milho/issues/6) define atendimento à empresa contribuinte, abordagem inicial ao advogado, acompanhamento da recuperação e remuneração fixa pelo cálculo mais êxito. Escopo: 103 termos, trânsito em julgado nos últimos quatro anos independentemente do ajuizamento, piso de R$ 50 mil no piloto e prioridade para empresas com mais processos. Dois níveis de qualificação e encaminhamento a parceiros compõem o cenário.
+
+Veja [estratégia, implicações e pendências](docs/ESTRATEGIA_NEGOCIO.md). As novas regras estão documentadas para desenvolvimento; o aplicativo ainda usa o filtro anterior de ajuizamento. Responsável jurídico, critérios detalhados e metas comerciais continuam pendentes. O próximo passo de negócio é validar a amostra e esses critérios.
 
 ## Painel de decisões
 
@@ -16,7 +22,7 @@ Para iniciar, siga [Executar no Windows ou Linux](docs/EXECUTAR.md). No Windows 
 
 [Perguntas, escolhas e orientações do projeto](https://guiga99.github.io/Rota_do_milho/) — painel web estático. As escolhas são confirmadas em issues do GitHub; rascunhos locais não constituem aprovação. Veja [como registrar respostas](docs/DECISOES.md). Uso local disponível; acesso operacional no endereço Streamlit depende de homologação.
 
-[Amostra real de 20 processos e relatório do incremento](docs/INCREMENTO_2.md). O painel permite baixar o Excel e escolher campos prioritários. O período padrão do aplicativo passou a ser os últimos cinco anos.
+[Amostra real de 20 processos e relatório do incremento](docs/INCREMENTO_2.md). O painel permite baixar o Excel e escolher campos prioritários. O aplicativo ainda usa cinco anos de ajuizamento; a issue #6 substitui esse recorte no planejamento por quatro anos de trânsito em julgado.
 
 [Incremento da issue #3: tabela enxuta, login Google e avaliação TJSC/eproc](docs/INCREMENTO_3.md). [Como configurar o login da equipe](docs/ACESSO_GOOGLE.md). TJSC disponível como consulta opcional por número CNJ; o padrão tributário continua no TRF4.
 
